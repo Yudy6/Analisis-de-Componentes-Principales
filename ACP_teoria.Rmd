@@ -228,3 +228,89 @@ Esta aproximación del ACP busca **direcciones de máxima varianza** en
 los datos, proporcionando una base ortogonal óptima para representar la
 información contenida en la matriz original con dimensionalidad
 reducida.
+
+------------------------------------------------------------------------
+
+# 4.1.2 Las componentes principales como aproximación por mínimos cuadrados de la matriz de datos
+
+------------------------------------------------------------------------
+A diferencia del enfoque de la sección anterior donde las componentes principales se introdujeron como las direcciones en las que los datos presentan la máxima variabilidad aquí se presenta una perspectiva equivalente pero basada en aproximar la matriz de datos mediante un modelo de dimensiones reducidas, utilizando el criterio de mínimos cuadrados.
+
+El punto de partida es nuevamente la matriz estandarizada:
+
+
+$$
+Y_{n \times p} = \{y_{ij}\} = \left\{\frac{x_{ij} - \bar{x}_j}{s_j}\right\}
+$$
+
+El objetivo es representar a $𝑌$ mediante una versión “simplificada”, es decir, utilizando solo unas pocas componentes principales. Esta idea se formaliza construyendo una aproximación de rango reducido de la forma:
+
+$$
+\tilde{\mathbf{Y}}^{(q)} = \mathbf{Z}_q \mathbf{U}'_q
+$$
+
+donde:
+
+- $\mathbf{U}_q$ es la matriz formada por los primeros $q$ vectores propios de $\mathbf{R}$, de dimensión $p \times q$.
+ 
+- $\mathbf{Z}_q = \mathbf{Y}\mathbf{U}_q$ contiene los scores o componentes principales, de tamaño $n \times q$.
+
+- $q < p$ es el número de dimensiones deseadas.
+
+
+Esta representación indica que cualquier fila de $\mathbf{Y}$, originalmente un vector en $\mathbb{R}^p$, se aproxima mediante una combinación lineal de solo $q$ direcciones ortogonales. 
+------------------------------------------------------------------------
+##Componente principal
+Entonces igual que antes se sabe que una componente es una combinación lineal: 
+$$
+Z_1 = u_{11}X_1 + u_{21}X_2 + \dots + u_{p1}X_p
+$$
+
+con 
+$$
+\sum_{j=1}^p u_{j1}^2 = 1
+$$
+
+------------------------------------------------------------------------
+##Primera componente 
+
+$$
+z_{i1} = \mathbf{u}'_1 \mathbf{y}_i = \sum_{j=1}^p u_{j1} y_{ij}
+$$
+
+- $y_{ij}$: datos centrados y estandarizados.
+- $\mathbf{u}_1$: vector de pesos (vector propio).
+- $z_{i1}$: proyección de cada individuo sobre la dirección de la primera componente.
+
+
+Como cada columna de $\mathbf{Y}$ tiene media $0$:
+- la componente también tiene media cero.
+- Su varianza es:
+$$
+\text{var}(\mathbf{z}_1) = \frac{1}{n} \sum_{i=1}^n z_{i1}^2
+$$
+
+------------------------------------------------------------------------
+##Problema de optimización 
+
+$$
+\max_{\mathbf{u}_1} \frac{1}{n} \sum_{i=1}^n \left( \sum_{j=1}^p u_{j1} y_{ij} \right)^2 \quad \text{sujeto a} \quad \sum_{j=1}^p u_{j1}^2 = 1
+$$
+------------------------------------------------------------------------
+##Interpretación geométrica 
+En este caso se tiene que La primera componente es la recta que minimiza las distancias cuadráticas a los puntos. En donde esa recta pasa por el origen y tiene dirección $u_1$.
+
+Tambien se puede decir que la razón por la que esta recta es óptima es que minimiza la suma de las distancias cuadráticas entre cada punto original y su proyección sobre la recta. Lo cual es equivalente a la definición basada en maximizar la varianza explicada.
+
+![Interpretación geometrica de una componente principal](D:/imagen_1.png)
+
+Si $z_{i1}$ es la coordenada del dato $\mathbf{y}_i$ sobre la primera componente, entonces su proyección sobre la recta es:
+$$
+\hat{\mathbf{y}}_i = z_{i1} \mathbf{u}_1
+$$
+Esta proyección es la mejor aproximación posible del punto original usando solo una dimensión.
+------------------------------------------------------------------------
+##Aproximación usando q componentes
+
+
+------------------------------------------------------------------------
