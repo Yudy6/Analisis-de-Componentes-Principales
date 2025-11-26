@@ -1,0 +1,55 @@
+---
+title: "Análisis de Componentes Principales"
+output: html_document
+date: "2025-11-25"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r include=FALSE}
+# Instalar paquetes si es necesario
+if (!require("FactoMineR")) install.packages("FactoMineR")
+if (!require("Factoshiny")) install.packages("Factoshiny")
+
+#Manejo de datos
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(readxl)
+library(haven)
+#Gráficos
+library(ggplot2)
+library(plotly)
+library(GGally)
+#ACP
+library(ade4)
+library(FactoClass)
+library(FactoMineR)
+library(factoextra)
+library(Factoshiny)
+
+#Ajustes de tema del documento y graficos
+library(scales)
+library(DT)
+library(gt)
+library(RColorBrewer)
+theme_set(theme_minimal(base_size = 24, base_family = "Atkinson Hyperlegible"))
+```
+
+```{r}
+# Cargar los archivos de datos
+load("Base de datos_filtrada.RData")
+# VERIFICACIÓN DE LAS VARIABLES SELECCIONADAS
+
+summary(datos_filtrados)
+```
+
+``` r
+# Crear muestra del 10% 
+muestra_10pct <- datos_con_dummies %>% 
+  sample_frac(0.10)
+nrow(muestra_10pct) # 3 154
+# 1. ACP estándar
+result <- PCAshiny(muestra_10pct %>% select(-id_persona))
+```
