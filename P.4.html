@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reconstrucción Exacta de Matrices de Datos mediante Valores y Vectores Propios</title>
+<title>Análisis de Componentes Principales</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,18 +23,18 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="PDF_files/libs/clipboard/clipboard.min.js"></script>
-<script src="PDF_files/libs/quarto-html/quarto.js"></script>
-<script src="PDF_files/libs/quarto-html/popper.min.js"></script>
-<script src="PDF_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="PDF_files/libs/quarto-html/anchor.min.js"></script>
-<link href="PDF_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="PDF_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="PDF_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="PDF_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="PDF_files/libs/bootstrap/bootstrap-1bc8a17f135ab3d594c857e9f48e611b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="P.4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="P.4_files/libs/quarto-html/quarto.js"></script>
+<script src="P.4_files/libs/quarto-html/popper.min.js"></script>
+<script src="P.4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="P.4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="P.4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="P.4_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="P.4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="P.4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="P.4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -74,10 +74,16 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios" id="toc-reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios" class="nav-link active" data-scroll-target="#reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios"><span class="header-section-number">1</span> Reconstrucción Exacta de una Matriz de Datos usando Valores y Vectores Propios</a>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">1</span> Introducción</a>
   <ul class="collapse">
-  <li><a href="#la-descomposición-en-valores-singulares-dvs" id="toc-la-descomposición-en-valores-singulares-dvs" class="nav-link" data-scroll-target="#la-descomposición-en-valores-singulares-dvs"><span class="header-section-number">1.1</span> La Descomposición en Valores Singulares (DVS)</a></li>
-  <li><a href="#interpretación-y-utilidad-en-acp" id="toc-interpretación-y-utilidad-en-acp" class="nav-link" data-scroll-target="#interpretación-y-utilidad-en-acp"><span class="header-section-number">1.2</span> Interpretación y utilidad en ACP</a></li>
+  <li><a href="#definición" id="toc-definición" class="nav-link" data-scroll-target="#definición"><span class="header-section-number">1.1</span> Definición:</a></li>
+  <li><a href="#descripción-general-del-método" id="toc-descripción-general-del-método" class="nav-link" data-scroll-target="#descripción-general-del-método"><span class="header-section-number">1.2</span> Descripción general del método</a></li>
+  <li><a href="#supuestos-del-método" id="toc-supuestos-del-método" class="nav-link" data-scroll-target="#supuestos-del-método"><span class="header-section-number">1.3</span> Supuestos del método</a></li>
+  </ul></li>
+  <li><a href="#reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios" id="toc-reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios" class="nav-link" data-scroll-target="#reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios"><span class="header-section-number">2</span> Reconstrucción Exacta de una Matriz de Datos usando Valores y Vectores Propios</a>
+  <ul class="collapse">
+  <li><a href="#la-descomposición-en-valores-singulares-dvs" id="toc-la-descomposición-en-valores-singulares-dvs" class="nav-link" data-scroll-target="#la-descomposición-en-valores-singulares-dvs"><span class="header-section-number">2.1</span> La Descomposición en Valores Singulares (DVS)</a></li>
+  <li><a href="#interpretación-y-utilidad-en-acp" id="toc-interpretación-y-utilidad-en-acp" class="nav-link" data-scroll-target="#interpretación-y-utilidad-en-acp"><span class="header-section-number">2.2</span> Interpretación y utilidad en ACP</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -86,7 +92,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Reconstrucción Exacta de Matrices de Datos mediante Valores y Vectores Propios</h1>
+<h1 class="title">Análisis de Componentes Principales</h1>
 </div>
 
 
@@ -103,12 +109,61 @@ window.Quarto = {
 </header>
 
 
-<section id="reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Reconstrucción Exacta de una Matriz de Datos usando Valores y Vectores Propios</h1>
+<section id="introducción" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introducción</h1>
+<p>En la investigación aplicada, especialmente en ciencias sociales, biología, economía e ingeniería es común trabajar con conjuntos de datos de alta dimensionalidad. Aunque un mayor número de variables puede aportar información valiosa, su análisis simultáneo presenta dificultades como el aumento de parámetros a estimar, el riesgo de multicolinealidad y la complejidad para interpretar la estructura subyacente de los datos. Esto hace necesario emplear métodos que resuman la información esencial sin perder las características relevantes del conjunto original.</p>
+<p>El Análisis de Componentes Principales (ACP) es una técnica multivariante diseñada precisamente para reducir la dimensionalidad. Transforma las variables originales en un nuevo conjunto menor de variables no correlacionadas, denominadas componentes principales. Estas componentes son combinaciones lineales de las variables originales, construidas de modo que capturen la máxima varianza posible, concentrando así la mayor cantidad de información.</p>
+<section id="definición" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="definición"><span class="header-section-number">1.1</span> Definición:</h2>
+<p>El Análisis de Componentes Principales (ACP) es una técnica estadística multivariante cuyo objetivo es transformar un conjunto de variables originales <span class="math inline">\(X_1, X_2, \dots, X_p\)</span> en un nuevo conjunto de variables no correlacionadas llamadas <strong>componentes principales</strong>. Estas nuevas variables son combinaciones lineales de las variables originales y se construyen de forma que capturen la máxima varianza posible, es decir, la mayor cantidad de información contenida en los datos.</p>
+<p>Formalmente, el <span class="math inline">\(k\)</span>-ésimo componente principal se define como:</p>
+<p><span class="math display">\[
+Y_k = a_{1k}X_1 + a_{2k}X_2 + \cdots + a_{pk}X_p,
+\]</span></p>
+<p>donde el vector</p>
+<p><span class="math display">\[
+\mathbf{a}_k = (a_{1k}, a_{2k}, \dots, a_{pk})'
+\]</span></p>
+<p>es el <strong>autovector</strong> correspondiente al <span class="math inline">\(k\)</span>-ésimo <strong>autovalor</strong> <span class="math inline">\(\lambda_k\)</span> de la matriz de covarianzas (o correlaciones) del conjunto de variables originales.</p>
+<p>Los autovalores cumplen:</p>
+<p><span class="math display">\[
+\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_p \ge 0,
+\]</span></p>
+<p>y cada <span class="math inline">\(\lambda_k\)</span> representa la <strong>varianza explicada</strong> por el componente principal <span class="math inline">\(Y_k\)</span>.<br>
+El primer componente principal captura la mayor varianza posible; el segundo captura la mayor varianza restante bajo la condición de ser <strong>ortogonal</strong> al primero, y así sucesivamente.</p>
+</section>
+<section id="descripción-general-del-método" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="descripción-general-del-método"><span class="header-section-number">1.2</span> Descripción general del método</h2>
+<p>Existen dos enfoques principales para comprender el método del Análisis de Componentes Principales (ACP). El primero, tradicionalmente utilizado en estadística, consiste en construir los componentes en las direcciones donde la matriz de datos <span class="math inline">\(X\)</span> presenta la <strong>máxima varianza</strong>. Bajo este enfoque, el primer componente principal es la combinación lineal de las variables que captura la mayor variabilidad posible; el segundo componente captura la mayor variabilidad restante bajo la condición de ser ortogonal al primero, y así sucesivamente. Para ello se emplean los autovalores y autovectores de la matriz de covarianzas o correlaciones, lo que garantiza que los componentes sean no correlacionados y estén ordenados según la varianza explicada.</p>
+<p>El segundo enfoque proviene del aprendizaje estadístico moderno, donde el ACP se interpreta como un problema de optimización que busca la mejor aproximación de la matriz de datos con menor dimensión. Esta aproximación se obtiene mediante la descomposición en valores singulares (SVD), que produce las mismas direcciones de variabilidad máxima que el enfoque clásico.</p>
+<p>Ambos enfoques producen la misma solución: los componentes principales corresponden a las direcciones de máxima varianza de <span class="math inline">\(X\)</span> y simultáneamente a las direcciones que generan la mejor aproximación de rango reducido de la matriz de datos. Esta equivalencia explica la solidez del ACP y su importancia tanto en la estadística clásica como en el aprendizaje automático.</p>
+</section>
+<section id="supuestos-del-método" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="supuestos-del-método"><span class="header-section-number">1.3</span> Supuestos del método</h2>
+<p>El Análisis de Componentes Principales (ACP) se basa en varios supuestos que garantizan la validez de su interpretación y de sus resultados:</p>
+<ol type="1">
+<li><p><strong>Relación lineal entre variables:</strong><br>
+El ACP asume que las relaciones entre las variables pueden describirse adecuadamente mediante combinaciones lineales. No es adecuado para capturar relaciones no lineales.</p></li>
+<li><p><strong>Escalas comparables entre variables:</strong><br>
+Dado que la varianza es sensible a la escala de medición, las variables deben estar estandarizadas cuando poseen unidades o magnitudes muy diferentes.</p></li>
+<li><p><strong>Varianza significativa en las variables:</strong><br>
+Las variables deben presentar variabilidad suficiente; variables casi constantes no aportan información y distorsionan los componentes.</p></li>
+<li><p><strong>Número adecuado de observaciones:</strong><br>
+Se recomienda contar con un número de observaciones considerablemente mayor que el número de variables para obtener estimaciones estables de la matriz de covarianzas o correlaciones.</p></li>
+<li><p><strong>Ausencia de multicolinealidad perfecta:</strong><br>
+Aunque el ACP maneja bien la colinealidad, no puede aplicarse cuando algunas variables son combinaciones lineales exactas de otras, pues la matriz de covarianzas sería singular.</p></li>
+<li><p><strong>Normalidad multivariada (deseable pero no estrictamente necesaria):</strong><br>
+El ACP no requiere que las variables sigan una distribución normal multivariada para ser calculado; sin embargo, este supuesto es útil cuando se desea realizar inferencias estadísticas o interpretar los componentes dentro de un modelo probabilístico.</p></li>
+</ol>
+<p>En conjunto, estos supuestos aseguran que el ACP proporcione componentes interpretables y representativos de la estructura interna de los datos. El cumplimiento de estos principios contribuye a mejorar la estabilidad y la calidad de los resultados obtenidos.</p>
+</section>
+</section>
+<section id="reconstrucción-exacta-de-una-matriz-de-datos-usando-valores-y-vectores-propios" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Reconstrucción Exacta de una Matriz de Datos usando Valores y Vectores Propios</h1>
 <p>En el análisis multivariado, y en particular en métodos como el Análisis de Componentes Principales (ACP), es posible reconstruir exactamente una matriz de datos utilizando sus valores y vectores propios gracias a la Descomposición en Valores Singulares (DVS).</p>
 <p>Este procedimiento descompone una matriz en el producto de tres matrices con características específicas, lo que no solo facilita su interpretación geométrica, sino que también resulta muy útil para realizar reducción de dimensionalidad.</p>
-<section id="la-descomposición-en-valores-singulares-dvs" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="la-descomposición-en-valores-singulares-dvs"><span class="header-section-number">1.1</span> La Descomposición en Valores Singulares (DVS)</h2>
+<section id="la-descomposición-en-valores-singulares-dvs" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="la-descomposición-en-valores-singulares-dvs"><span class="header-section-number">2.1</span> La Descomposición en Valores Singulares (DVS)</h2>
 <p>La DVS muestra que cualquier matriz <span class="math inline">\(C\)</span> de tamaño <span class="math inline">\(n \times p\)</span> y rango <span class="math inline">\(r\)</span> puede factorizarse de la siguiente forma:</p>
 <p><span class="math display">\[
 C = V L U'
@@ -173,8 +228,8 @@ X\;=\; \sum_{\alpha=1}^{p} \sqrt{\lambda_\alpha}\, v_\alpha u_\alpha'
 </ul>
 <p>Esto implica que <strong>solo es necesario calcular los valores y vectores propios de una de estas matrices</strong> para obtener también los de la otra.</p>
 </section>
-<section id="interpretación-y-utilidad-en-acp" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="interpretación-y-utilidad-en-acp"><span class="header-section-number">1.2</span> Interpretación y utilidad en ACP</h2>
+<section id="interpretación-y-utilidad-en-acp" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="interpretación-y-utilidad-en-acp"><span class="header-section-number">2.2</span> Interpretación y utilidad en ACP</h2>
 <p>Asi, la factorizacion <span class="math inline">\(X=VLU´\)</span> muetra una transformacion diferente de los datos:</p>
 <ul>
 <li><p><strong>Las Componentes Principales (Scores de los Individuos):</strong><br>
@@ -223,7 +278,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -255,27 +321,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -283,7 +329,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
@@ -380,6 +426,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
+      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
