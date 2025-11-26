@@ -120,11 +120,18 @@ que garantizan la validez de su interpretación y de sus resultados:
     Aunque el ACP maneja bien la colinealidad, no puede aplicarse cuando
     algunas variables son combinaciones lineales exactas de otras, pues
     la matriz de covarianzas sería singular.
-    
-6. **Normalidad multivariada (deseable pero no estrictamente necesaria):**  
-   El ACP no requiere que las variables sigan una distribución normal multivariada    para ser calculado; sin embargo, este supuesto es útil cuando se desea realizar    inferencias estadísticas o interpretar los componentes dentro de un modelo        probabilístico.
 
-En conjunto, estos supuestos aseguran que el ACP proporcione componentes interpretables y representativos de la estructura interna de los datos. El cumplimiento de estos principios contribuye a mejorar la estabilidad y la calidad de los resultados obtenidos.
+6.  **Normalidad multivariada (deseable pero no estrictamente
+    necesaria):**\
+    El ACP no requiere que las variables sigan una distribución normal
+    multivariada para ser calculado; sin embargo, este supuesto es útil
+    cuando se desea realizar inferencias estadísticas o interpretar los
+    componentes dentro de un modelo probabilístico.
+
+En conjunto, estos supuestos aseguran que el ACP proporcione componentes
+interpretables y representativos de la estructura interna de los datos.
+El cumplimiento de estos principios contribuye a mejorar la estabilidad
+y la calidad de los resultados obtenidos.
 
 ## Las componentes principales como direcciones de máxima varianza
 
@@ -188,7 +195,7 @@ lineal: $$
 z_{i1} = u_1'y_i = \sum_{j=1}^p u_{j1}y_{ij}
 $$
 
-###Formulación del problema de optimización:
+### Formulación del problema de optimización:
 
 La varianza de $z_1$ es: $$
 var(z_1) = \frac{1}{n}\sum_{i=1}^n z_{i1}^2 = \frac{1}{n}\sum_{i=1}^n \left(\sum_{j=1}^p u_{j1}y_{ij}\right)^2
@@ -345,3 +352,95 @@ Esta aproximación del ACP busca **direcciones de máxima varianza** en
 los datos, proporcionando una base ortogonal óptima para representar la
 información contenida en la matriz original con dimensionalidad
 reducida.
+
+# Varianza de las Componentes Principales
+
+La varianza de cada componente principal puede obtenerse utilizando el
+Teorema de la Descomposición Espectral (TDE). Si $Y$ es la matriz de
+datos centrados y estandarizados, la matriz de correlaciones se define
+como:
+
+$$
+R = \frac{1}{n} Y'Y.
+$$
+
+El TDE garantiza que esta matriz puede descomponerse como:
+
+$$
+R = U \Lambda U',
+$$
+
+donde:
+
+-   $U$ es una matriz ortogonal cuyas columnas son los **vectores
+    propios estandarizados** de $R$,
+-   $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2, \dots, \lambda_p)$
+    contiene los **valores propios** ordenados de mayor a menor.
+
+Cada valor propio $\lambda_\alpha$ corresponde a la **varianza** del
+$\alpha$-ésimo componente principal:
+
+$$
+\operatorname{var}(z_\alpha) = \lambda_\alpha.
+$$
+
+A partir de esto, el **porcentaje de varianza explicada** por el
+$\alpha$-ésimo componente se define como:
+
+$$
+\tau_\alpha = \frac{\lambda_\alpha}{\sum_{i=1}^{p} \lambda_i}.
+$$
+
+Asimismo, la **varianza explicada acumulada** por los primeros $q$
+componentes es:
+
+$$
+\tau_q = \frac{\sum_{\alpha = 1}^{q} \lambda_\alpha}{\sum_{i = 1}^{p} \lambda_i}.
+$$
+
+Estas cantidades permiten evaluar cuánto de la información original está
+siendo representada por los componentes retenidos. En general, se
+seleccionan los primeros componentes que explican un porcentaje adecuado
+de la varianza total, lo cual asegura una representación eficiente del
+conjunto de datos en menos dimensiones.
+
+# Elementos para la interpretación de un ACP
+
+La interpretación de un Análisis de Componentes Principales (ACP)
+requiere considerar un conjunto de elementos que, aunque pueden
+analizarse por separado para facilitar su comprensión, deben integrarse
+al final para obtener una lectura global coherente del fenómeno
+estudiado. El ACP no solo transforma las variables originales en
+componentes más manejables, sino que además proporciona herramientas que
+permiten comprender la estructura interna de los datos, la contribución
+de cada variable y la organización de los individuos en el nuevo espacio
+factorial.
+
+En esta sección se describen los principales elementos que intervienen
+en dicha interpretación:
+
+### Calidad de la representación
+
+La calidad de la representación se refiere a qué tan bien los
+componentes principales retenidos logran describir la información
+contenida en las variables originales. Para evaluarla se utiliza la
+**varianza explicada acumulada**, la cual indica el porcentaje de
+variabilidad total que es capturada por los primeros componentes.
+
+Una buena selección del número de componentes permite representar los
+datos en un espacio de menor dimensión sin perder información relevante.
+Entre los criterios más utilizados para decidir cuántos componentes
+conservar se encuentran:
+
+-   Conservar tantos componentes como sean necesarios para alcanzar un
+    **porcentaje mínimo de varianza acumulada**, usualmente entre 70% y
+    90%.
+-   Conservar los componentes cuyo **autovalor sea mayor que 1** (regla
+    de Kaiser).
+-   Inspeccionar el **gráfico de sedimentación (scree plot)** para
+    identificar el punto donde la varianza explicada deja de disminuir
+    de manera pronunciada.
+
+En conjunto, estos criterios permiten asegurar una representación
+adecuada del conjunto de datos al reducir su dimensionalidad mediante el
+ACP.
