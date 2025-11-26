@@ -7,9 +7,126 @@ editor_options:
     wrap: 72
 ---
 
-# 4.1.1: Las componentes principales como direcciones en las que la matriz de datos tiene la máxima varianza
+En la investigación aplicada, especialmente en ciencias sociales,
+biología, economía e ingeniería es común trabajar con conjuntos de datos
+de alta dimensionalidad. Aunque un mayor número de variables puede
+aportar información valiosa, su análisis simultáneo presenta
+dificultades como el aumento de parámetros a estimar, el riesgo de
+multicolinealidad y la complejidad para interpretar la estructura
+subyacente de los datos. Esto hace necesario emplear métodos que resuman
+la información esencial sin perder las características relevantes del
+conjunto original.
 
-------------------------------------------------------------------------
+El Análisis de Componentes Principales (ACP) es una técnica
+multivariante diseñada precisamente para reducir la dimensionalidad.
+Transforma las variables originales en un nuevo conjunto menor de
+variables no correlacionadas, denominadas componentes principales. Estas
+componentes son combinaciones lineales de las variables originales,
+construidas de modo que capturen la máxima varianza posible,
+concentrando así la mayor cantidad de información.
+
+## Definición:
+
+El Análisis de Componentes Principales (ACP) es una técnica estadística
+multivariante cuyo objetivo es transformar un conjunto de variables
+originales $X_1, X_2, \dots, X_p$ en un nuevo conjunto de variables no
+correlacionadas llamadas **componentes principales**. Estas nuevas
+variables son combinaciones lineales de las variables originales y se
+construyen de forma que capturen la máxima varianza posible, es decir,
+la mayor cantidad de información contenida en los datos.
+
+Formalmente, el $k$-ésimo componente principal se define como:
+
+$$
+Y_k = a_{1k}X_1 + a_{2k}X_2 + \cdots + a_{pk}X_p,
+$$
+
+donde el vector
+
+$$
+\mathbf{a}_k = (a_{1k}, a_{2k}, \dots, a_{pk})'
+$$
+
+es el **autovector** correspondiente al $k$-ésimo **autovalor**
+$\lambda_k$ de la matriz de covarianzas (o correlaciones) del conjunto
+de variables originales.
+
+Los autovalores cumplen:
+
+$$
+\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_p \ge 0,
+$$
+
+y cada $\lambda_k$ representa la **varianza explicada** por el
+componente principal $Y_k$.\
+El primer componente principal captura la mayor varianza posible; el
+segundo captura la mayor varianza restante bajo la condición de ser
+**ortogonal** al primero, y así sucesivamente.
+
+## Descripción general del método
+
+Existen dos enfoques principales para comprender el método del Análisis
+de Componentes Principales (ACP). El primero, tradicionalmente utilizado
+en estadística, consiste en construir los componentes en las direcciones
+donde la matriz de datos $X$ presenta la **máxima varianza**. Bajo este
+enfoque, el primer componente principal es la combinación lineal de las
+variables que captura la mayor variabilidad posible; el segundo
+componente captura la mayor variabilidad restante bajo la condición de
+ser ortogonal al primero, y así sucesivamente. Para ello se emplean los
+autovalores y autovectores de la matriz de covarianzas o correlaciones,
+lo que garantiza que los componentes sean no correlacionados y estén
+ordenados según la varianza explicada.
+
+El segundo enfoque proviene del aprendizaje estadístico moderno, donde
+el ACP se interpreta como un problema de optimización que busca la mejor
+aproximación de la matriz de datos con menor dimensión. Esta
+aproximación se obtiene mediante la descomposición en valores singulares
+(SVD), que produce las mismas direcciones de variabilidad máxima que el
+enfoque clásico.
+
+Ambos enfoques producen la misma solución: los componentes principales
+corresponden a las direcciones de máxima varianza de $X$ y
+simultáneamente a las direcciones que generan la mejor aproximación de
+rango reducido de la matriz de datos. Esta equivalencia explica la
+solidez del ACP y su importancia tanto en la estadística clásica como en
+el aprendizaje automático.
+
+## Supuestos del método
+
+El Análisis de Componentes Principales (ACP) se basa en varios supuestos
+que garantizan la validez de su interpretación y de sus resultados:
+
+1.  **Relación lineal entre variables:**\
+    El ACP asume que las relaciones entre las variables pueden
+    describirse adecuadamente mediante combinaciones lineales. No es
+    adecuado para capturar relaciones no lineales.
+
+2.  **Escalas comparables entre variables:**\
+    Dado que la varianza es sensible a la escala de medición, las
+    variables deben estar estandarizadas cuando poseen unidades o
+    magnitudes muy diferentes.
+
+3.  **Varianza significativa en las variables:**\
+    Las variables deben presentar variabilidad suficiente; variables
+    casi constantes no aportan información y distorsionan los
+    componentes.
+
+4.  **Número adecuado de observaciones:**\
+    Se recomienda contar con un número de observaciones
+    considerablemente mayor que el número de variables para obtener
+    estimaciones estables de la matriz de covarianzas o correlaciones.
+
+5.  **Ausencia de multicolinealidad perfecta:**\
+    Aunque el ACP maneja bien la colinealidad, no puede aplicarse cuando
+    algunas variables son combinaciones lineales exactas de otras, pues
+    la matriz de covarianzas sería singular.
+    
+6. **Normalidad multivariada (deseable pero no estrictamente necesaria):**  
+   El ACP no requiere que las variables sigan una distribución normal multivariada    para ser calculado; sin embargo, este supuesto es útil cuando se desea realizar    inferencias estadísticas o interpretar los componentes dentro de un modelo        probabilístico.
+
+En conjunto, estos supuestos aseguran que el ACP proporcione componentes interpretables y representativos de la estructura interna de los datos. El cumplimiento de estos principios contribuye a mejorar la estabilidad y la calidad de los resultados obtenidos.
+
+## Las componentes principales como direcciones de máxima varianza
 
 ## Contexto inicial y preparación de datos
 
