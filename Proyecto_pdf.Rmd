@@ -10,7 +10,22 @@ author:
   - "Fredy Arley Urrea Cifuentes (furreac@unal.edu.co)"
 
 date: ""       # dejamos esto vacío y la fecha la pone LaTeX
-output: pdf
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+ormat:
+  pdf:
+    documentclass: article
+    fontsize: 11pt
+    geometry: "margin=2.5cm"
+    linestretch: 1.1
+    indent: true
+
+header-includes: |
+  \setlength{\parskip}{0em}          % sin espacio extra entre párrafos
+  \setlength{\parindent}{1.5em}      % con sangría
+  \date{1 de noviembre de 2025}      % fecha tal cual quieres que salga
 ---
 
 # Descripción de la base de datos ENPOL 2021
@@ -757,16 +772,25 @@ g_final
 
 ```
 
-A partir de los anteriores birplots y análisis se pueden interpretar los seis factores seleccionados de la siguiente manera:
+A partir de los anteriores birplots y análisis se pueden interpretar los
+seis factores seleccionados de la siguiente manera:
 
-1. **Factor 1**: separa a mujeres y hombres según el tipo de centro penitenciario.
-2. **Factor 2**: concentra variables sobre hijos y dependientes económicos.
-3. **Factor 3**: recoge el historial de detenciones previas y número de reclusiones.
-4. **Factor 4**: asociado a haber convivido con padre o madre durante la infancia.
-5. **Factor 5**: dominado por el hacinamiento y la percepción de seguridad interna.
-6. **Factor 6**: combina edad con horas de encierro y hábitos diarios.
+1.  **Factor 1**: separa a mujeres y hombres según el tipo de centro
+    penitenciario.
+2.  **Factor 2**: concentra variables sobre hijos y dependientes
+    económicos.
+3.  **Factor 3**: recoge el historial de detenciones previas y número de
+    reclusiones.
+4.  **Factor 4**: asociado a haber convivido con padre o madre durante
+    la infancia.
+5.  **Factor 5**: dominado por el hacinamiento y la percepción de
+    seguridad interna.
+6.  **Factor 6**: combina edad con horas de encierro y hábitos diarios.
 
-En conjunto, cada factor interpreta independientepente un aspecto de las personas privadas de la libertad en mexico y podemos quedarnos con estas 6 variables para posteriores estudios en vez de con las 17 variables iniciales.
+En conjunto, cada factor interpreta independientepente un aspecto de las
+personas privadas de la libertad en mexico y podemos quedarnos con estas
+6 variables para posteriores estudios en vez de con las 17 variables
+iniciales.
 
 ------------------------------------------------------------------------
 
@@ -780,7 +804,7 @@ Interpretación: - Permiten incluir información adicional sin afectar el
 cálculo de las componentes. - Cercanía a variables/objetos activos:
 Indica similitud o asociación.
 
-```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+```{r echo=FALSE, fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
 res.PCA<-PCA(datos_con_dummies %>% select(-id_persona),quali.sup=c(2,3),graph=FALSE,  scale.unit = TRUE)
 
 # ---- Variables suplementarias ----
@@ -796,7 +820,26 @@ plot.PCA(
 
 ```
 
-------------------------------------------------------------------------
+Aunque las variables categóricas solo pueden incorporarse formalmente al
+ACP al convertirlas en dummies, existe otra alternativa: proyectarlas a
+posteriori sobre los planos factoriales. Eso fue justamente lo que
+hicimos con escolaridad y estado civil.
+
+Al observar su posición en los planos, se sugiere que:
+
+-   Dentro de la población privada de la libertad, podría haber más
+    mujeres que hombres en condición de viudez y con niveles educativos
+    superiores a la secundaria.
+
+-   Estas mismas personas parecen no tener responsabilidades de
+    manutención, ya sea porque no tienen hijos menores o no sostienen
+    económicamente a alguien.
+
+-   En contraste, quienes tienen hijos menores y asumen su manutención
+    tienden a ubicarse cerca de las categorías separado/a, divorciado/a
+    o en unión libre.
+
+ En conjunto, nos presentan diferentes situaciones que en conjuto y en este contexto nos da indicios de como es la población penitenciaria en México.
 
 ``` r
 # Crear muestra del 10% 
