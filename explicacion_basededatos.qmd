@@ -1,0 +1,41 @@
+---
+title: "descripcion_base"
+format: html
+editor: visual
+---
+
+---
+title: "Descripción de la Base de Datos ENPOL 2021"
+format: html
+---
+
+# Descripción de la base de datos ENPOL 2021
+
+Para este proyecto utilizo la **Encuesta Nacional de la Población Privada de la Libertad (ENPOL)** correspondiente al año **2021**, la cual es una operación estadística desarrollada por el Instituto Nacional de Estadística y Geografía (INEGI) de México. Esta encuesta constituye una de las fuentes más completas y actualizadas sobre las condiciones de vida, características sociodemográficas y situación jurídica de las personas privadas de la libertad en el país.
+
+La ENPOL tiene como objetivo generar información confiable sobre diferentes aspectos del internamiento, tales como el acceso a servicios básicos, el nivel de hacinamiento, los antecedentes familiares y laborales de la población reclusa, y la experiencia que las personas han tenido dentro del sistema penitenciario. Esta encuesta se ha aplicado en dos ocasiones, en 2016 y 2021; para este trabajo utilizo los datos más recientes.
+
+En general, la ENPOL incluye una amplia variedad de temas: desde variables sociodemográficas hasta condiciones específicas del internamiento, percepciones de seguridad, reincidencia, vínculos familiares y características del centro penitenciario. En este proyecto se trabajó con un subconjunto de estas variables, las cuales fueron:
+
+$$
+\text{Tabla de Variables}
+$$
+
+| Variable | Definición | Categoría / Tipo |
+|----------------|-----------------------------------------|----------------|
+| **edad** | Edad de la persona privada de la libertad en años cumplidos. | Cuantitativa discreta |
+| **numero_hijos** | Número total de hijos que la persona declara tener. | Cuantitativa discreta |
+| **personas_celda** | Cantidad de personas que comparten la celda con el entrevistado. | Cuantitativa discreta |
+| **comida_dia** | Número de comidas que la persona recibe diariamente. | Cuantitativa discreta |
+| **horas_celda** | Total de horas que la persona pasa dentro de su celda en un día típico. | Cuantitativa continua |
+| **veces_recluido** | Número de veces que la persona ha sido recluida previamente. | Cuantitativa discreta |
+| **sexo** | Sexo reportado por la persona entrevistada. | Cualitativa nominal |
+| **estado_civil** | Estado civil actual de la persona. | Cualitativa nominal |
+| **escolaridad** | Nivel educativo más alto alcanzado antes del internamiento. | Cualitativa ordinal |
+| **tiene_hijos** | Indica si la persona tiene o no hijos. | Cualitativa nominal |
+| **mantiene_alguien** | Señala si sostenía económicamente a alguien antes del ingreso. | Cualitativa nominal |
+| **estado_detencion** | Situación jurídica actual: procesado o sentenciado. | Cualitativa nominal |
+| **seguridad_celda** | Percepción de seguridad dentro de la celda. | Cualitativa ordinal |
+| **antes_recluido** | Indica si la persona había estado recluida anteriormente. | Cualitativa nominal |
+| **vivio_con_madr** | Indica si vivió con su madre antes de los 15 años. | Cualitativa nominal |
+| **vivio_con_padr** | Indica si vivió con su padre antes de los 15 años. | Cualitativa nominal |
