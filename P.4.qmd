@@ -87,12 +87,6 @@ El ACP identifica direcciones de máxima varianza mediante combinaciones lineale
 
 En conjunto, estos supuestos aseguran que el ACP proporcione componentes interpretables y representativos de la estructura interna de los datos. El cumplimiento de estos principios contribuye a mejorar la estabilidad y la calidad de los resultados obtenidos.
 
-# Reconstrucción Exacta de una Matriz de Datos usando Valores y Vectores Propios
-
-En el análisis multivariado, y en particular en métodos como el Análisis de Componentes Principales (ACP), es posible reconstruir exactamente una matriz de datos utilizando sus valores y vectores propios gracias a la Descomposición en Valores Singulares (DVS).
-
-Este procedimiento descompone una matriz en el producto de tres matrices con características específicas, lo que no solo facilita su interpretación geométrica, sino que también resulta muy útil para realizar reducción de dimensionalidad.
-
 ## Las componentes principales como direcciones de máxima varianza
 
 ## Contexto inicial y preparación de datos
@@ -284,44 +278,11 @@ $$
 
 Esta aproximación del ACP busca **direcciones de máxima varianza** en los datos, proporcionando una base ortogonal óptima para representar la información contenida en la matriz original con dimensionalidad reducida.
 
-# Varianza de las Componentes Principales
+# Reconstrucción Exacta de una Matriz de Datos usando Valores y Vectores Propios
 
-La varianza de cada componente principal puede obtenerse utilizando el Teorema de la Descomposición Espectral (TDE). Si $Y$ es la matriz de datos centrados y estandarizados, la matriz de correlaciones se define como:
+En el análisis multivariado, y en particular en métodos como el Análisis de Componentes Principales (ACP), es posible reconstruir exactamente una matriz de datos utilizando sus valores y vectores propios gracias a la Descomposición en Valores Singulares (DVS).
 
-$$
-R = \frac{1}{n} Y'Y.
-$$
-
-El TDE garantiza que esta matriz puede descomponerse como:
-
-$$
-R = U \Lambda U',
-$$
-
-donde:
-
--   $U$ es una matriz ortogonal cuyas columnas son los **vectores propios estandarizados** de $R$,
--   $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2, \dots, \lambda_p)$ contiene los **valores propios** ordenados de mayor a menor.
-
-Cada valor propio $\lambda_\alpha$ corresponde a la **varianza** del $\alpha$-ésimo componente principal:
-
-$$
-\operatorname{var}(z_\alpha) = \lambda_\alpha.
-$$
-
-A partir de esto, el **porcentaje de varianza explicada** por el $\alpha$-ésimo componente se define como:
-
-$$
-\tau_\alpha = \frac{\lambda_\alpha}{\sum_{i=1}^{p} \lambda_i}.
-$$
-
-Asimismo, la **varianza explicada acumulada** por los primeros $q$ componentes es:
-
-$$
-\tau_q = \frac{\sum_{\alpha = 1}^{q} \lambda_\alpha}{\sum_{i = 1}^{p} \lambda_i}.
-$$
-
-Estas cantidades permiten evaluar cuánto de la información original está siendo representada por los componentes retenidos. En general, se seleccionan los primeros componentes que explican un porcentaje adecuado de la varianza total, lo cual asegura una representación eficiente del conjunto de datos en menos dimensiones.
+Este procedimiento descompone una matriz en el producto de tres matrices con características específicas, lo que no solo facilita su interpretación geométrica, sino que también resulta muy útil para realizar reducción de dimensionalidad.
 
 ## La Descomposición en Valores Singulares (DVS)
 
@@ -401,17 +362,34 @@ Por otro lado, un resultado clave que surge de la DVS es la **equivalencia entre
 
 Esto implica que **solo es necesario calcular los valores y vectores propios de una de estas matrices** para obtener también los de la otra.
 
-# Interpretación y utilidad en ACP
+# Varianza de las Componentes Principales
 
-Así, la factorización (X = V L U') muestra una transformación diferente de los datos:
+La varianza de cada componente principal puede obtenerse utilizando el Teorema de la Descomposición Espectral (TDE). Si $Y$ es la matriz de datos centrados y estandarizados, la matriz de correlaciones se define como:
 
-**Las Componentes Principales (Scores de los Individuos):**\
-La matriz (Z = V L) contiene las coordenadas de los individuos; es decir, cada columna de (Z) representa la proyección de todas las observaciones sobre la $\alpha$-ésima componente. Esto muestra cómo se ubican las muestras en el nuevo espacio de características reducido.
+$$ R = \frac{1}{n} Y'Y. $$
 
-**Las Cargas Factoriales (Contribuciones de las Variables):**\
-La matriz (U) o, en su versión escalada, $U \sqrt{L}$ reúne las cargas factoriales, que muestran el peso y la dirección que tiene cada variable original en la construcción de las componentes principales. Cuando una carga es alta en valor absoluto, significa que esa variable tiene una influencia importante sobre la componente correspondiente. Es decir, la matriz (U) nos muestra qué variables originales son las que realmente impulsan cada componente.
+El TDE garantiza que esta matriz puede descomponerse como:
 
-En general, la reconstrucción exacta de la matriz (X) a través de la DVS no solo es un resultado teórico interesante, sino que también constituye el fundamento computacional del ACP. Gracias a este enfoque es posible reducir la dimensionalidad sin perder la estructura esencial de los datos, facilitar la visualización de las relaciones entre individuos y variables, y comprender mejor la geometría que hay detrás del conjunto de datos.
+$$ R = U \Lambda U', $$
+
+donde:
+
+-   $U$ es una matriz ortogonal cuyas columnas son los **vectores propios estandarizados** de $R$,
+-   $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2, \dots, \lambda_p)$ contiene los **valores propios** ordenados de mayor a menor.
+
+Cada valor propio $\lambda_\alpha$ corresponde a la **varianza** del $\alpha$-ésimo componente principal:
+
+$$ \operatorname{var}(z_\alpha) = \lambda_\alpha. $$
+
+A partir de esto, el **porcentaje de varianza explicada** por el $\alpha$-ésimo componente se define como:
+
+$$ \tau_\alpha = \frac{\lambda_\alpha}{\sum_{i=1}^{p} \lambda_i}. $$
+
+Asimismo, la **varianza explicada acumulada** por los primeros $q$ componentes es:
+
+$$ \tau_q = \frac{\sum_{\alpha = 1}^{q} \lambda_\alpha}{\sum_{i = 1}^{p} \lambda_i}. $$
+
+Estas cantidades permiten evaluar cuánto de la información original está siendo representada por los componentes retenidos. En general, se seleccionan los primeros componentes que explican un porcentaje adecuado de la varianza total, lo cual asegura una representación eficiente del conjunto de datos en menos dimensiones.
 
 # Elementos para la interpretación de un ACP
 
