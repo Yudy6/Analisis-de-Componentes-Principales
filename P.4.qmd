@@ -9,7 +9,7 @@ author:
   - "Laura Katherine Martínez Castiblanco (laumartinezca@unal.edu.co)"
   - "Fredy Arley Urrea Cifuentes (furreac@unal.edu.co)"
 
-date: ""       # dejamos esto vacío y la fecha la pone LaTeX
+date: ""      
 lang: es
 
 format:
