@@ -26,7 +26,6 @@ header-includes: |
   \date{1 de noviembre de 2025}      % fecha tal cual quieres que salga
 ---
 
-
 # Introducción
 
 En la investigación aplicada, especialmente en ciencias sociales, biología, economía e ingeniería es común trabajar con conjuntos de datos de alta dimensionalidad. Aunque un mayor número de variables puede aportar información valiosa, su análisis simultáneo presenta dificultades como el aumento de parámetros a estimar, el riesgo de multicolinealidad y la complejidad para interpretar la estructura subyacente de los datos. Esto hace necesario emplear métodos que resuman la información esencial sin perder las características relevantes del conjunto original.
@@ -69,25 +68,22 @@ El segundo enfoque proviene del aprendizaje estadístico moderno, donde el ACP s
 Ambos enfoques producen la misma solución: los componentes principales corresponden a las direcciones de máxima varianza de $X$ y simultáneamente a las direcciones que generan la mejor aproximación de rango reducido de la matriz de datos. Esta equivalencia explica la solidez del ACP y su importancia tanto en la estadística clásica como en el aprendizaje automático.
 
 ## Supuestos del método
+
 El Análisis de Componentes Principales (ACP) se basa en varios supuestos que garantizan la validez de su interpretación y de sus resultados:
 
 1.  **Relación lineal entre variables:**
 
 El ACP identifica direcciones de máxima varianza mediante combinaciones lineales. Por ello, se asume que la estructura subyacente del conjunto de datos puede capturarse adecuadamente a través de relaciones lineales entre las variables. Relaciones no lineales no son detectadas por este método.
 
-2.  **Escalas comparables entre variables:**
-Debido a que el ACP maximiza la varianza, las variables deben tener escalas similares para evitar que aquellas con valores mayores dominen los componentes. Cuando las unidades son heterogéneas, se recomienda aplicar estandarización
-3.  **Varianza significativa en las variables:**
-Variables con varianza muy baja o casi constantes no contribuyen información relevante y pueden distorsionar la estructura de los componentes. El ACP requiere que las variables tengan variabilidad apreciable.
+2.  **Escalas comparables entre variables:** Debido a que el ACP maximiza la varianza, las variables deben tener escalas similares para evitar que aquellas con valores mayores dominen los componentes. Cuando las unidades son heterogéneas, se recomienda aplicar estandarización
 
-4.  **Número adecuado de observaciones:**
-Para obtener estimaciones estables de la matriz de covarianzas o correlaciones, es recomendable que el número de observaciones supere ampliamente al número de variables.
+3.  **Varianza significativa en las variables:** Variables con varianza muy baja o casi constantes no contribuyen información relevante y pueden distorsionar la estructura de los componentes. El ACP requiere que las variables tengan variabilidad apreciable.
 
-5.  **Ausencia de multicolinealidad perfecta:**
-Aunque el ACP maneja bien la colinealidad, no puede aplicarse cuando algunas variables son combinaciones lineales exactas de otras, ya que la matriz de covarianzas se vuelve singular y no puede descomponerse.
+4.  **Número adecuado de observaciones:** Para obtener estimaciones estables de la matriz de covarianzas o correlaciones, es recomendable que el número de observaciones supere ampliamente al número de variables.
 
-6.  **Normalidad multivariada (deseable pero no estrictamente necesaria):**
-El ACP no requiere que las variables sigan una distribución normal multivariada para ser calculado; sin embargo, este supuesto es útil cuando se desea realizar inferencias estadísticas o interpretar los componentes dentro de un modelo probabilístico.
+5.  **Ausencia de multicolinealidad perfecta:** Aunque el ACP maneja bien la colinealidad, no puede aplicarse cuando algunas variables son combinaciones lineales exactas de otras, ya que la matriz de covarianzas se vuelve singular y no puede descomponerse.
+
+6.  **Normalidad multivariada (deseable pero no estrictamente necesaria):** El ACP no requiere que las variables sigan una distribución normal multivariada para ser calculado; sin embargo, este supuesto es útil cuando se desea realizar inferencias estadísticas o interpretar los componentes dentro de un modelo probabilístico.
 
 En conjunto, estos supuestos aseguran que el ACP proporcione componentes interpretables y representativos de la estructura interna de los datos. El cumplimiento de estos principios contribuye a mejorar la estabilidad y la calidad de los resultados obtenidos.
 
@@ -96,7 +92,6 @@ En conjunto, estos supuestos aseguran que el ACP proporcione componentes interpr
 En el análisis multivariado, y en particular en métodos como el Análisis de Componentes Principales (ACP), es posible reconstruir exactamente una matriz de datos utilizando sus valores y vectores propios gracias a la Descomposición en Valores Singulares (DVS).
 
 Este procedimiento descompone una matriz en el producto de tres matrices con características específicas, lo que no solo facilita su interpretación geométrica, sino que también resulta muy útil para realizar reducción de dimensionalidad.
-
 
 ## Las componentes principales como direcciones de máxima varianza
 
@@ -115,9 +110,7 @@ print(na_antes)
 
 $$
 X_{n \times p} = \{x_{ij}\}
-$$ donde: - $n$: número de objetos (individuos, ciudades, etc.) - $p$:
-número de variables - $x_{ij}$: valor de la variable $j$ en el objeto
-$i$
+$$ donde: - $n$: número de objetos (individuos, ciudades, etc.) - $p$: número de variables - $x_{ij}$: valor de la variable $j$ en el objeto $i$
 
 ### Estadísticos básicos por variable:
 
@@ -130,9 +123,7 @@ $$
 Y_{n \times p} = \{y_{ij}\} = \left\{\frac{x_{ij} - \bar{x}_j}{s_j}\right\}
 $$
 
-**Propiedades de Y:** - Media cero:
-$\bar{Y}_j = \frac{1}{n}\sum_{i=1}^n y_{ij} = 0$ - Varianza unitaria:
-$var(Y_j) = \frac{1}{n}\sum_{i=1}^n y_{ij}^2 = 1$
+**Propiedades de Y:** - Media cero: $\bar{Y}_j = \frac{1}{n}\sum_{i=1}^n y_{ij} = 0$ - Varianza unitaria: $var(Y_j) = \frac{1}{n}\sum_{i=1}^n y_{ij}^2 = 1$
 
 ------------------------------------------------------------------------
 
@@ -140,12 +131,10 @@ $var(Y_j) = \frac{1}{n}\sum_{i=1}^n y_{ij}^2 = 1$
 
 Podemos ver $Y$ de dos formas:
 
-1.  **Como vectores fila:** $y_i' = (y_{i1}, y_{i2}, \ldots, y_{ip})$
-    para $i = 1,\ldots,n$\
+1.  **Como vectores fila:** $y_i' = (y_{i1}, y_{i2}, \ldots, y_{ip})$ para $i = 1,\ldots,n$\
     → Análisis de similitudes entre objetos
 
-2.  **Como vectores columna:** $Y_j = (y_{1j}, y_{2j}, \ldots, y_{nj})'$
-    para $j = 1,\ldots,p$\
+2.  **Como vectores columna:** $Y_j = (y_{1j}, y_{2j}, \ldots, y_{nj})'$ para $j = 1,\ldots,p$\
     → Análisis de asociaciones entre variables
 
 ------------------------------------------------------------------------
@@ -154,9 +143,7 @@ Podemos ver $Y$ de dos formas:
 
 ### **Objetivo:**
 
-Encontrar un vector de ponderaciones $u_1' = (u_{11}, \ldots, u_{p1})$
-normalizado ($u_1'u_1 = 1$) que maximice la varianza de la combinación
-lineal: $$
+Encontrar un vector de ponderaciones $u_1' = (u_{11}, \ldots, u_{p1})$ normalizado ($u_1'u_1 = 1$) que maximice la varianza de la combinación lineal: $$
 z_{i1} = u_1'y_i = \sum_{j=1}^p u_{j1}y_{ij}
 $$
 
@@ -178,8 +165,7 @@ $$ sujeto a: $\sum_{j=1}^p u_{j1}^2 = 1$
 
 $$
 \mathcal{L}(u_1, \lambda) = u_1'Ru_1 - \lambda(u_1'u_1 - 1)
-$$ donde $R = \frac{1}{n}Y'Y$ es la **matriz de correlación** (cuando
-trabajamos con datos estandarizados).
+$$ donde $R = \frac{1}{n}Y'Y$ es la **matriz de correlación** (cuando trabajamos con datos estandarizados).
 
 ### Derivadas e igualación a cero:
 
@@ -197,12 +183,9 @@ trabajamos con datos estandarizados).
 
 ### Interpretación del resultado:
 
-La ecuación $Ru_1 = \lambda u_1$ nos dice que: - $u_1$ es un **vector
-propio** de la matriz $R$ - $\lambda$ es el **valor propio**
-correspondiente
+La ecuación $Ru_1 = \lambda u_1$ nos dice que: - $u_1$ es un **vector propio** de la matriz $R$ - $\lambda$ es el **valor propio** correspondiente
 
-Para **maximizar la varianza**, elegimos el **mayor valor propio**
-$\lambda_1$ de $R$, y su vector propio correspondiente $u_1$.
+Para **maximizar la varianza**, elegimos el **mayor valor propio** $\lambda_1$ de $R$, y su vector propio correspondiente $u_1$.
 
 ------------------------------------------------------------------------
 
@@ -210,9 +193,7 @@ $\lambda_1$ de $R$, y su vector propio correspondiente $u_1$.
 
 ### **Objetivo:**
 
-Encontrar un segundo vector $u_2' = (u_{12}, \ldots, u_{p2})$ que: - Sea
-ortogonal a $u_1$: $u_1'u_2 = 0$ - Esté normalizado: $u_2'u_2 = 1$ -
-Maximice la varianza de $z_2 = Yu_2$
+Encontrar un segundo vector $u_2' = (u_{12}, \ldots, u_{p2})$ que: - Sea ortogonal a $u_1$: $u_1'u_2 = 0$ - Esté normalizado: $u_2'u_2 = 1$ - Maximice la varianza de $z_2 = Yu_2$
 
 ### **Problema de optimización:**
 
@@ -242,9 +223,7 @@ Multiplicamos la primera ecuación por $u_1'$ por la izquierda: $$
 2u_1'Ru_2 - 2\lambda_2 u_1'u_2 - \gamma u_1'u_1 = 0
 $$
 
-Sabemos que: - $u_1'u_2 = 0$ (restricción de ortogonalidad) -
-$u_1'u_1 = 1$ (normalización) -
-$u_1'Ru_2 = u_1'(\lambda_1 u_1)'u_2 = \lambda_1 u_1'u_2 = 0$
+Sabemos que: - $u_1'u_2 = 0$ (restricción de ortogonalidad) - $u_1'u_1 = 1$ (normalización) - $u_1'Ru_2 = u_1'(\lambda_1 u_1)'u_2 = \lambda_1 u_1'u_2 = 0$
 
 Por tanto: $$
 0 - 0 - \gamma(1) = 0 \Rightarrow \gamma = 0
@@ -256,8 +235,7 @@ Con $\gamma = 0$, la ecuación se reduce a: $$
 Ru_2 = \lambda_2 u_2
 $$
 
-Nuevamente, $u_2$ es un **vector propio** de $R$, y para maximizar la
-varianza elegimos el **segundo mayor valor propio** $\lambda_2$.
+Nuevamente, $u_2$ es un **vector propio** de $R$, y para maximizar la varianza elegimos el **segundo mayor valor propio** $\lambda_2$.
 
 ------------------------------------------------------------------------
 
@@ -269,8 +247,7 @@ $$
 z_{i\alpha} = \sum_{j=1}^p u_{j\alpha}y_{ij} = y_i'u_\alpha
 $$ $$
 z_\alpha = Yu_\alpha
-$$ donde $u_\alpha$ es el α-ésimo vector propio de $R$ asociado al
-α-ésimo mayor valor propio $\lambda_\alpha$.
+$$ donde $u_\alpha$ es el α-ésimo vector propio de $R$ asociado al α-ésimo mayor valor propio $\lambda_\alpha$.
 
 ### **Propiedades:**
 
@@ -282,12 +259,9 @@ $$ donde $u_\alpha$ es el α-ésimo vector propio de $R$ asociado al
 
 ## Interpretación geométrica
 
-Cada componente principal $z_\alpha$ representa la **proyección** de los
-datos originales sobre la dirección definida por el vector propio
-$u_\alpha$.
+Cada componente principal $z_\alpha$ representa la **proyección** de los datos originales sobre la dirección definida por el vector propio $u_\alpha$.
 
-La **varianza explicada** por cada componente es exactamente igual al
-valor propio correspondiente: $$
+La **varianza explicada** por cada componente es exactamente igual al valor propio correspondiente: $$
 var(z_\alpha) = \lambda_\alpha
 $$
 
@@ -299,31 +273,20 @@ $$
 
 ## Resumen del procedimiento
 
-1.  **Centrar y estandarizar** los datos:
-    $Y = \left\{\frac{x_{ij}-\bar{x}_j}{s_j}\right\}$
+1.  **Centrar y estandarizar** los datos: $Y = \left\{\frac{x_{ij}-\bar{x}_j}{s_j}\right\}$
 2.  **Calcular matriz de correlación:** $R = \frac{1}{n}Y'Y$
-3.  **Descomposición espectral:** Encontrar valores y vectores propios
-    de $R$
-4.  **Ordenar** valores propios en forma descendente:
-    $\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_p$
-5.  **Componentes principales:** $z_\alpha = Yu_\alpha$, donde
-    $u_\alpha$ es el α-ésimo vector propio
-6.  **Seleccionar** las primeras $q$ componentes que acumulen suficiente
-    varianza
+3.  **Descomposición espectral:** Encontrar valores y vectores propios de $R$
+4.  **Ordenar** valores propios en forma descendente: $\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_p$
+5.  **Componentes principales:** $z_\alpha = Yu_\alpha$, donde $u_\alpha$ es el α-ésimo vector propio
+6.  **Seleccionar** las primeras $q$ componentes que acumulen suficiente varianza
 
 ------------------------------------------------------------------------
 
-Esta aproximación del ACP busca **direcciones de máxima varianza** en
-los datos, proporcionando una base ortogonal óptima para representar la
-información contenida en la matriz original con dimensionalidad
-reducida.
+Esta aproximación del ACP busca **direcciones de máxima varianza** en los datos, proporcionando una base ortogonal óptima para representar la información contenida en la matriz original con dimensionalidad reducida.
 
 # Varianza de las Componentes Principales
 
-La varianza de cada componente principal puede obtenerse utilizando el
-Teorema de la Descomposición Espectral (TDE). Si $Y$ es la matriz de
-datos centrados y estandarizados, la matriz de correlaciones se define
-como:
+La varianza de cada componente principal puede obtenerse utilizando el Teorema de la Descomposición Espectral (TDE). Si $Y$ es la matriz de datos centrados y estandarizados, la matriz de correlaciones se define como:
 
 $$
 R = \frac{1}{n} Y'Y.
@@ -337,40 +300,28 @@ $$
 
 donde:
 
--   $U$ es una matriz ortogonal cuyas columnas son los **vectores
-    propios estandarizados** de $R$,
--   $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2, \dots, \lambda_p)$
-    contiene los **valores propios** ordenados de mayor a menor.
+-   $U$ es una matriz ortogonal cuyas columnas son los **vectores propios estandarizados** de $R$,
+-   $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2, \dots, \lambda_p)$ contiene los **valores propios** ordenados de mayor a menor.
 
-Cada valor propio $\lambda_\alpha$ corresponde a la **varianza** del
-$\alpha$-ésimo componente principal:
+Cada valor propio $\lambda_\alpha$ corresponde a la **varianza** del $\alpha$-ésimo componente principal:
 
 $$
 \operatorname{var}(z_\alpha) = \lambda_\alpha.
 $$
 
-A partir de esto, el **porcentaje de varianza explicada** por el
-$\alpha$-ésimo componente se define como:
+A partir de esto, el **porcentaje de varianza explicada** por el $\alpha$-ésimo componente se define como:
 
 $$
 \tau_\alpha = \frac{\lambda_\alpha}{\sum_{i=1}^{p} \lambda_i}.
 $$
 
-Asimismo, la **varianza explicada acumulada** por los primeros $q$
-componentes es:
+Asimismo, la **varianza explicada acumulada** por los primeros $q$ componentes es:
 
 $$
 \tau_q = \frac{\sum_{\alpha = 1}^{q} \lambda_\alpha}{\sum_{i = 1}^{p} \lambda_i}.
 $$
 
-Estas cantidades permiten evaluar cuánto de la información original está
-siendo representada por los componentes retenidos. En general, se
-seleccionan los primeros componentes que explican un porcentaje adecuado
-de la varianza total, lo cual asegura una representación eficiente del
-conjunto de datos en menos dimensiones.
-
-
-
+Estas cantidades permiten evaluar cuánto de la información original está siendo representada por los componentes retenidos. En general, se seleccionan los primeros componentes que explican un porcentaje adecuado de la varianza total, lo cual asegura una representación eficiente del conjunto de datos en menos dimensiones.
 
 ## La Descomposición en Valores Singulares (DVS)
 
@@ -462,45 +413,6 @@ La matriz (U) o, en su versión escalada, $U \sqrt{L}$ reúne las cargas factori
 
 En general, la reconstrucción exacta de la matriz (X) a través de la DVS no solo es un resultado teórico interesante, sino que también constituye el fundamento computacional del ACP. Gracias a este enfoque es posible reducir la dimensionalidad sin perder la estructura esencial de los datos, facilitar la visualización de las relaciones entre individuos y variables, y comprender mejor la geometría que hay detrás del conjunto de datos.
 
-# Varianza de las Componentes Principales
-
-La varianza de cada componente principal puede obtenerse utilizando el Teorema de la Descomposición Espectral (TDE). Si $Y$ es la matriz de datos centrados y estandarizados, la matriz de correlaciones se define como:
-
-$$
-R = \frac{1}{n} Y'Y.
-$$
-
-El TDE garantiza que esta matriz puede descomponerse como:
-
-$$
-R = U \Lambda U',
-$$
-
-donde:
-
--   $U$ es una matriz ortogonal cuyas columnas son los **vectores propios estandarizados** de $R$,
--   $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2, \dots, \lambda_p)$ contiene los **valores propios** ordenados de mayor a menor.
-
-Cada valor propio $\lambda_\alpha$ corresponde a la **varianza** del $\alpha$-ésimo componente principal:
-
-$$
-\operatorname{var}(z_\alpha) = \lambda_\alpha.
-$$
-
-A partir de esto, el **porcentaje de varianza explicada** por el $\alpha$-ésimo componente se define como:
-
-$$
-\tau_\alpha = \frac{\lambda_\alpha}{\sum_{i=1}^{p} \lambda_i}.
-$$
-
-Asimismo, la **varianza explicada acumulada** por los primeros $q$ componentes es:
-
-$$
-\tau_q = \frac{\sum_{\alpha = 1}^{q} \lambda_\alpha}{\sum_{i = 1}^{p} \lambda_i}.
-$$
-
-Estas cantidades permiten evaluar cuánto de la información original está siendo representada por los componentes retenidos. En general, se seleccionan los primeros componentes que explican un porcentaje adecuado de la varianza total, lo cual asegura una representación eficiente del conjunto de datos en menos dimensiones.
-
 # Elementos para la interpretación de un ACP
 
 La interpretación de un Análisis de Componentes Principales (ACP) requiere integrar diversos elementos que describen la estructura interna de los datos, la contribución de las variables y la organización de los objetos en el espacio factorial. Aunque cada indicador puede analizarse por separado, la interpretación final debe ser conjunta para obtener una lectura coherente del fenómeno estudiado. A continuación, se presentan los principales elementos utilizados en la interpretación de un ACP
@@ -519,7 +431,7 @@ Una buena selección asegura una reducción de la dimensionalidad sin pérdida s
 
 ### Correlaciones variable–factor
 
-Las correlaciones variable–factor, también llamadas cargas* o *loadings, indican el grado en que cada variable original está asociada a un componente principal. Estas correlaciones permiten evaluar cuánto aporta una variable a la construcción de un componente y qué tan bien queda representada en el espacio reducido.
+Las correlaciones variable–factor, también llamadas cargas\* o \*loadings, indican el grado en que cada variable original está asociada a un componente principal. Estas correlaciones permiten evaluar cuánto aporta una variable a la construcción de un componente y qué tan bien queda representada en el espacio reducido.
 
 Para la variable $Y_j$ y el componente $\alpha$, la correlación variable–factor está dada por:
 
