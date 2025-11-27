@@ -231,7 +231,7 @@ reducida.
 
 ------------------------------------------------------------------------
 
-# 4.1.2 Las componentes principales como aproximación por mínimos cuadrados de la matriz de datos
+#Las componentes principales como aproximación por mínimos cuadrados de la matriz de datos
 
 ------------------------------------------------------------------------
 A diferencia del enfoque de la sección anterior donde las componentes principales se introdujeron como las direcciones en las que los datos presentan la máxima variabilidad aquí se presenta una perspectiva equivalente pero basada en aproximar la matriz de datos mediante un modelo de dimensiones reducidas, utilizando el criterio de mínimos cuadrados.
@@ -311,6 +311,79 @@ $$
 Esta proyección es la mejor aproximación posible del punto original usando solo una dimensión.
 ------------------------------------------------------------------------
 ##Aproximación usando q componentes
+De esta manera el ACP permite representar cada observación original mediante una combinación de solo las primeras $q$ componentes principales, reduciendo la dimensión del problema sin perder demasiada información.
 
+Para cada dato original $y_{ij}$, su aproximación utilizando únicamente $q$ componentes está dada por:
+$$
+\hat{y}_{ij} = \sum_{r=1}^{q} z_{ir} u_{jr},
+$$
+donde:
+
+-  $z_{ir}$ son los \textbf{scores} de la observación $i$ sobre la componente $r$, es decir, indican qué tan lejos está el individuo en esa dirección.
+-  $u_{jr}$ son los \textbf{loadings}, que describen cómo contribuye la variable $j$ en la componente $r$.
+
+Asi, esta descomposición muestra que el ACP reconstruye los datos como la multiplicación:
+$$
+\text{Datos} \approx \text{Scores} \times \text{Loadings}^{\text{T}}.
+$$
+esta aproximación corresponde a proyectar los datos sobre el subespacio generado por los primeros $q$ vectores propios, lo cual constituye la mejor aproximación posible en el sentido de mínimos cuadrados. Esto debido a que el ACP coincide con la descomposición espectral, asi, los vectores propios asociados a los valores propios más grandes generan la mejor aproximación posible de rango $q$.
+------------------------------------------------------------------------
+##Calidad de la aproximación 
+Para ver que tan buena seria esta aproximación se puede pensar en analizar si las componentes capturan mucha o poca varianza, para esto, la varianza total (SCT) esta dada por : 
+$$
+\sum_{j=1}^{p} s_j^2 = \frac{1}{n} \sum_{j=1}^{p} \sum_{i=1}^{n} y_{ij}^2,
+$$
+y para calcular la varianza explicada por la $r$-esima componente, la varianza de esos scores es:
+$$
+\frac{1}{n} \sum_{i=1}^{n} z_{ir}^2 = \frac{1}{n} \sum_{i=1}^{n} \left(\sum_{j=1}^{p} u_{jr} y_{ij}\right)^2
+$$
+Entonces se tiene que el porcentaje de varianza explicada por la $r$-esima componente es:  
+$$
+\frac{\sum_{i=1}^{n} z_{ir}^2}{\sum_{j=1}^{p} \sum_{i=1}^{n} y_{ij}^2}.
+$$
+Una perspectiva geométrica clave es que la variabilidad total de cada observación puede descomponerse exactamente en dos partes, la varianza explicada en las componentes principales mas la explicada por las diferencias entre los datos y su aproximación que es justamente la que queda sin explicar, de esta manera:
+
+![Descomposición de sumas de cuadrados](D:/imagen_2.png)
+Esto es: 
+$$
+\sum_{j=1}^{p} \frac{1}{n} \sum_{i=1}^{n} y_{ij}^2 = \sum_{r=1}^{q} \frac{1}{n} \sum_{i=1}^{n} z_{ir}^2 + \sum_{j=1}^{p} \frac{1}{n} \sum_{i=1}^{n} \left(y_{ij} - \sum_{r=1}^{q} z_{ir} u_{jr}\right)^2
+$$
+ahora dividiendo ambas partes de la ecuacion por $\sum_{j=1}^{p} \frac{1}{n} \sum_{i=1}^{n} y_{ij}^2$ y despejando se puede observar que: 
+$$
+\frac{\sum_{r=1}^{q} \sum_{i=1}^{n} z_{ir}^2}{\sum_{j=1}^{p} \sum_{i=1}^{n} y_{ij}^2} = 1 - \frac{\sum_{j=1}^{p} \sum_{i=1}^{n} \left(y_{ij} - \sum_{r=1}^{q} z_{ir} u_{jr}\right)^2}{\sum_{j=1}^{p} \sum_{i=1}^{n} y_{ij}^2}
+$$
+que esto es justamente la fracción de la variabilidad total que es explicada por los primeros $q$ componentes principales, esto es lo que se conoce como
+$$\tau_q = 1 - \frac{SCR}{SCT} $$
+donde $SCR$ es la suma de cuadrados residual y $SCT$ es la suma de cuadrados total y se puede decir que si el $SCR$ es pequeño, significa que la aproximación con $q$ componentes es muy buena, en consecuencia, $\tau_q$ será grande, indicando que los componentes capturan una alta proporción de la información original.
+
+------------------------------------------------------------------------
+
+#Equivalencia entre el enfoque de direcciones de máxima varianza y el de aproximación por mínimos cuadrados
+------------------------------------------------------------------------
+Partiendo de la expansión en valores singulares de la matriz estandarizada
+$$
+\mathbf{Y} = \sum_{\alpha=1}^{p} \sqrt{\lambda_{\alpha}} \mathbf{v}_{\alpha} \mathbf{u}_{\alpha}',
+$$
+cada entrada de $\mathbf{Y}$ se escribe como
+$$
+y_{ij} = \sum_{\alpha=1}^{p} \sqrt{\lambda_{\alpha}} v_{i\alpha} u_{j\alpha}.
+$$
+luego se sabe que la aproximación de rango $q$ se obtiene truncando esta suma en los primeros $q$ términos:
+$$
+\hat{y}_{ij} = \sum_{\alpha=1}^{q} \sqrt{\lambda_{\alpha}} v_{i\alpha} u_{j\alpha}.
+$$
+Entonces, se puede ver que el residuo de la aproximación es exactamente:
+$$
+y_{ij} - \hat{y}_{ij} = \sum_{\alpha=q+1}^{p} \sqrt{\lambda_{\alpha}} v_{i\alpha} u_{j\alpha}.
+$$
+Al tomar sumas de cuadrados sobre todas las observaciones y variables y usar la ortonormalidad de los autovectores, se obtiene que la suma de cuadrados residual queda dada por la suma de los autovalores descartados, esto es; 
+$$
+SCR = \sum_{j=1}^{p} \sum_{i=1}^{n} (y_{ij} - \hat{y}_{ij})^2 = \sum_{\alpha=q+1}^{p} \lambda_{\alpha},
+$$
+mientras que la suma de cuadrados total satisface $SCT = \sum_{\alpha=1}^{p} \lambda_{\alpha}$. De aquí se puede deduce que minimizar la suma de cuadrados residual equivale a maximizar la varianza explicada por las $q$ primeras componentes;
+$$
+\tau_q = \frac{\sum_{\alpha=1}^{q} \lambda_{\alpha}}{\sum_{\alpha=1}^{p} \lambda_{\alpha}} = 1 - \frac{SCR}{SCT}.
+$$
+En consecuencia, las direcciones que resuelven el problema de máxima varianza y las que resuelven el problema de aproximación por mínimos cuadrados coinciden, asi, ambas son los vectores propios de $\mathbf{Y}'\mathbf{Y}$ asociados a los mayores autovalores, entonces las soluciones son equivalentes.
 
 ------------------------------------------------------------------------
