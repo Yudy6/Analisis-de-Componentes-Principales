@@ -374,9 +374,56 @@ Interpretación: - Indica cuánto contribuye la variable $Y_j$a la
 formación de la componente $z_\alpha$. - Valores altos: La variable es
 importante para definir esa componente.
 
+```{r echo=FALSE, fig.height=10, fig.width=11, message=FALSE, warning=FALSE}
+n_ejes <- 6
+
+# Preparar una lista para almacenar los gráficos de cada eje.
+graficos_contribucion <- list()
+
+for (eje in 1:n_ejes) {
+  contribuciones <- res.pca$var$contrib[, eje]
+  
+  # Ordenar las variables por su contribución (de mayor a menor)
+  contribuciones_ordenadas <- sort(contribuciones, decreasing = TRUE)
+  
+  # Seleccionar las 10 variables con mayor contribución (ajusta este número si lo deseas)
+  top_vars <- names(contribuciones_ordenadas)[1:10]
+  top_contribs <- contribuciones_ordenadas[1:10]
+  
+  # Crear un data frame para el gráfico
+  df_contrib <- data.frame(
+    Variable = factor(top_vars, levels = top_vars), # Para mantener el orden en el gráfico
+    Contribucion = top_contribs
+  )
+  
+  # Crear el gráfico de barras
+  grafico_eje <- ggplot(df_contrib, aes(x = Variable, y = Contribucion)) +
+    geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
+    labs(
+      title = paste("Contribución de variables al Eje", eje),
+      x = "Variable",
+      y = "Contribución (%)"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      panel.grid.major.y = element_line(color = "grey80"),
+      panel.grid.minor.y = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 8) # Rotar etiquetas para mejor lectura
+    ) +
+    # Añadir texto con el valor de la contribución encima de cada barra
+    geom_text(aes(label = round(Contribucion, 1)), vjust = -0.3, size = 3)
+  
+  # Guardar el gráfico en la lista
+  graficos_contribucion[[eje]] <- grafico_eje
+  
+}
+wrap_plots(graficos_contribucion, ncol = n_ejes/3)
+```
+
 ------------------------------------------------------------------------
 
-## Cosenos Cuadrados (\$\cos\^2 \$)
+## Cosenos Cuadrados ($\cos^2$)
 
 $$
 \cos^2(\theta_{j,\alpha}) = \lambda_\alpha \cdot u_{j\alpha}^2
@@ -385,6 +432,56 @@ $$
 Interpretación: - Representa la proporción de la varianza de la variable
 $Y_j$que es explicada por la componente $z_\alpha$. - Valores altos: La
 variable está bien representada en esa componente.
+
+```{r echo=FALSE, fig.height=10, fig.width=11, message=FALSE, warning=FALSE}
+# Número de ejes a graficar
+n_ejes <- 6
+
+# Lista para almacenar gráficos
+graficos_cos2 <- list()
+
+for (eje in 1:n_ejes) {
+  
+  # Extraer resultados de variables del PCA
+  var_res <- factoextra::get_pca_var(res.pca)
+  
+  # Obtener cos² de las variables para el eje actual
+  cos2_vals <- var_res$cos2[, eje]
+  
+  # Ordenar descendentemente
+  cos2_ordenado <- sort(cos2_vals, decreasing = TRUE)
+  
+  # Seleccionar las 10 variables con mayor cos²
+  top_vars <- names(cos2_ordenado)[1:10]
+  top_cos2 <- cos2_ordenado[1:10]
+  
+  # Data frame
+  df_cos2 <- data.frame(
+    Variable = factor(top_vars, levels = top_vars),
+    Cos2 = top_cos2
+  )
+  
+  
+  # Gráfico
+  g <- ggplot(df_cos2, aes(x = Variable, y = Cos2)) +
+    geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
+    geom_text(aes(label = round(Cos2, 3)), vjust = -0.4, size = 3) +
+    labs(
+      title = paste("Calidad de representación (cos²) – Eje", eje),
+      x = "Variable",
+      y = "Cos²"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 8)
+    )
+  
+  graficos_cos2[[eje]] <- g
+}
+wrap_plots(graficos_cos2, ncol = n_ejes/3)
+
+```
 
 ------------------------------------------------------------------------
 
@@ -399,54 +496,191 @@ $$
 Interpretación: - Representa la posición del objeto $i$en la componente
 $\alpha$. - Se usan para graficar los objetos en los planos factoriales.
 
-------------------------------------------------------------------------
+```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+# ---------- GRÁFICO 1: VARIABLES ----------
+g1 <- plot.PCA(
+  res.pca,
+  choix = "var",
+  select = "cos2 0.2",
+  unselect = 0,
+  habillage = 'contrib',  
+  label = "all"
+) + 
+  ggtitle("Mapa de Variables (cos² ≥ 0.20)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
-## Contribuciones de los Objetos a la Varianza del Factor
+# ---------- GRÁFICO 2: INDIVIDUOS ----------
+g2 <- plot.PCA(
+  res.pca,
+  choix = "ind",
+  invisible = c("ind.sup"),
+  select = "cos2 0.7",
+  habillage = 'contrib', 
+  label = "none"
+) +
+  ggtitle("Mapa de Individuos (cos² ≥ 0.70)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
-$$
-\text{Contribución}(i, z_\alpha) = \frac{z_{i\alpha}^2}{\lambda_\alpha}
-$$
+g_final <- g1 + g2 +
+  plot_annotation(
+    title = "Análisis de Componentes Principales (ACP)",
+    theme = theme(
+      plot.title = element_text(size = 18, face = "bold", hjust = 0.5)
+    )
+  )
+g_final
 
-Interpretación: - Indica cuánto contribuye el objeto \$i \$a la varianza
-de la componente \$z\_\alpha \$. - Valores altos: El objeto es
-importante para definir esa componente.
+```
 
-------------------------------------------------------------------------
 
-## Cosenos Cuadrados para Objetos
+```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+# ---------- GRÁFICO 1: VARIABLES ----------
+g1 <- plot.PCA(
+  res.pca,
+  choix = "var",
+  axes=c(2,3),
+  select = "cos2 0.2",
+  unselect = 0,
+  habillage = 'contrib',  
+  label = "all"
+) + 
+  ggtitle("Mapa de Variables (cos² ≥ 0.20)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
-$$
-\cos^2(\theta_{i,\alpha}) = \frac{z_{i\alpha}^2}{\sum_{\alpha=1}^p z_{i\alpha}^2}
-$$
+# ---------- GRÁFICO 2: INDIVIDUOS ----------
+g2 <- plot.PCA(
+  res.pca,
+  choix = "ind",
+  axes=c(2,3),
+  invisible = c("ind.sup"),
+  select = "cos2 0.7",
+  habillage = 'contrib', 
+  label = "none"
+) +
+  ggtitle("Mapa de Individuos (cos² ≥ 0.70)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
-Interpretación: - Mide qué tan bien está representado el objeto \$i \$en
-la componente \$\alpha \$. - Valores altos: El objeto está bien
-representado en esa componente.
+g_final <- g1 + g2 +
+  plot_annotation(
+    title = "Análisis de Componentes Principales (ACP)",
+    theme = theme(
+      plot.title = element_text(size = 18, face = "bold", hjust = 0.5)
+    )
+  )
+g_final
 
-------------------------------------------------------------------------
+```
 
-## Distancias entre Variables
+```{r echo=FALSE, fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+# ---------- GRÁFICO 1: VARIABLES ----------
+g1 <- plot.PCA(
+  res.pca,
+  choix = "var",
+  axes=c(3,4),
+  select = "cos2 0.2",
+  unselect = 0,
+  habillage = 'contrib',  
+  label = "all"
+) + 
+  ggtitle("Mapa de Variables (cos² ≥ 0.20)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
-matriz de correlación $$
-d^2(Y_j, Y_{j'}) = 2 \left(1 - \cos(\theta_{jj'})\right)
-$$ donde \$\cos(\theta*{jj'}) \$es la correlación entre \$Y_j \$e
-\$Y*{j'} \$.
+# ---------- GRÁFICO 2: INDIVIDUOS ----------
+g2 <- plot.PCA(
+  res.pca,
+  choix = "ind",
+  axes=c(3,4),
+  invisible = c("ind.sup"),
+  select = "cos2 0.7",
+  habillage = 'contrib', 
+  label = "none"
+) +
+  ggtitle("Mapa de Individuos (cos² ≥ 0.70)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
-Interpretación: - \$d \approx 0 \$: Variables muy correlacionadas. - \$d
-\approx \sqrt{2} \$: Variables no correlacionadas. - \$d \approx 2 \$:
-Variables inversamente correlacionadas.
+g_final <- g1 + g2 +
+  plot_annotation(
+    title = "Análisis de Componentes Principales (ACP)",
+    theme = theme(
+      plot.title = element_text(size = 18, face = "bold", hjust = 0.5)
+    )
+  )
+g_final
 
-------------------------------------------------------------------------
+```
 
-## Distancias entre Objetos
 
-$$
-d^2(i, i') = \sum_{j=1}^p (y_{ij} - y_{i'j})^2
-$$
+```{r echo=FALSE, fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+# ---------- GRÁFICO 1: VARIABLES ----------
+g1 <- plot.PCA(
+  res.pca,
+  choix = "var",
+  axes=c(5,6),
+  select = "cos2 0.2",
+  unselect = 0,
+  habillage = 'contrib',  
+  label = "all"
+) + 
+  ggtitle("Mapa de Variables (cos² ≥ 0.20)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
-Interpretación: - Objetos cercanos: Tienen perfiles similares. - Objetos
-lejanos: Tienen perfiles diferentes. - Objetos en cuadrantes opuestos:
-Tienen perfiles opuestos.
+# ---------- GRÁFICO 2: INDIVIDUOS ----------
+g2 <- plot.PCA(
+  res.pca,
+  choix = "ind",
+  axes=c(5,6),
+  invisible = c("ind.sup"),
+  select = "cos2 0.7",
+  habillage = 'contrib', 
+  label = "none"
+) +
+  ggtitle("Mapa de Individuos (cos² ≥ 0.70)") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
+
+g_final <- g1 + g2 +
+  plot_annotation(
+    title = "Análisis de Componentes Principales (ACP)",
+    theme = theme(
+      plot.title = element_text(size = 18, face = "bold", hjust = 0.5)
+    )
+  )
+g_final
+
+```
+
+
 
 ------------------------------------------------------------------------
 

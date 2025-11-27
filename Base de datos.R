@@ -307,24 +307,18 @@ result <- PCAshiny(muestra_10pct %>% select(-id_persona))
 
 # 2. ACP manual
 #Preparar datos separando variables cuantitativas y cualitativas
-datos_qual <- datos_limpios %>%
-  select(sexo, estado_civil, escolaridad, tiene_hijos)
+vars_cont <- datos_con_dummies %>% 
+  select(-c(id_persona, estado_civil, escolaridad))
 
-datos_quant <- datos_limpios %>%
-  select(edad, personas_celda, comida_dia, horas_celda, veces_recluido) %>%
-  mutate(across(everything(), as.numeric))
+res.pca<-FactoMineR:: PCA(vars_cont, scale.unit = TRUE, ncp = 20, graph = FALSE)
+acp <- dudi.pca(vars_cont, scannf = FALSE, nf = 15) 
 
-# ACP con FactoMineR (maneja mejor grandes datasets)
-result_pca <- PCA(datos_quant, graph = FALSE)
 
 # Ver resultados
-summary(result_pca)
+summary(res.pca)
 # Graficar resultados
-plot(result_pca, choix = "ind")
-plot(result_pca, choix = "var")
-plot(result_pca, choix = "varcor")
+plot(res.pca, choix = "ind")
+plot(res.pca, choix = "var")
+plot(res.pca, choix = "varcor")
 
-# correlacion con corplot
-library(corrplot)
-corr_matrix <- cor(datos_quant)
 
