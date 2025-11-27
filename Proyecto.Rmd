@@ -30,11 +30,11 @@ header-includes: |
 
 # Descripción de la base de datos ENPOL 2021
 
-Para este proyecto utilizo la **Encuesta Nacional de la Población
-Privada de la Libertad (ENPOL)** correspondiente al año **2021**, la
-cual es una operación estadística desarrollada por el Instituto Nacional
-de Estadística y Geografía (INEGI) de México. Esta encuesta constituye
-una de las fuentes más completas y actualizadas sobre las condiciones de
+Para este proyecto utilizo la Encuesta Nacional de la Población Privada
+de la Libertad (ENPOL) correspondiente al año 2021, la cual es una
+operación estadística desarrollada por el Instituto Nacional de
+Estadística y Geografía (INEGI) de México. Esta encuesta constituye una
+de las fuentes más completas y actualizadas sobre las condiciones de
 vida, características sociodemográficas y situación jurídica de las
 personas privadas de la libertad en el país.
 
@@ -118,19 +118,41 @@ gt(diccionario) %>%
 
 ```
 
-La base de datos original cuenta con 61.449 personas entrevistadas, a quienes se les aplicó un cuestionario de 1.252 variables. Dado el volumen y la naturaleza de la información (mayoritariamente dicotómica y con opciones adicionales como “no sé” o “no respondo”) es ideal aplicar un Análisis de Componentes Principales (ACP) que permita sintetizar y describir mejor la estructura subyacente de los datos.
+La base de datos original cuenta con 61.449 personas entrevistadas, a
+quienes se les aplicó un cuestionario de 1.252 variables. Dado el
+volumen y la naturaleza de la información (mayoritariamente dicotómica y
+con opciones adicionales como “no sé” o “no respondo”) es ideal aplicar
+un Análisis de Componentes Principales (ACP) que permita sintetizar y
+describir mejor la estructura subyacente de los datos.
 
-Sin embargo, para los fines de este proyecto (y dado a limitaciones computacionales) se seleccionó un subconjunto de 17 variables relacionadas con características sociodemográficas, condiciones de internamiento y antecedentes personales. Durante la revisión inicial se identificó que varias preguntas no eran respondidas por motivos lógicos. Por ejemplo, quienes indicaban no tener hijos dejaban en blanco el número de hijos; en estos casos se imputó el valor 0, coherente con el contexto.
+Sin embargo, para los fines de este proyecto (y dado a limitaciones
+computacionales) se seleccionó un subconjunto de 17 variables
+relacionadas con características sociodemográficas, condiciones de
+internamiento y antecedentes personales. Durante la revisión inicial se
+identificó que varias preguntas no eran respondidas por motivos lógicos.
+Por ejemplo, quienes indicaban no tener hijos dejaban en blanco el
+número de hijos; en estos casos se imputó el valor 0, coherente con el
+contexto.
 
-Tras este ajuste, el volumen restante de datos faltantes resultó mínimo en relación con el tamaño total de la muestra, por lo que se optó por eliminar los registros con respuestas vacías o con las opciones “No sabe/No responde”.
+Tras este ajuste, el volumen restante de datos faltantes resultó mínimo
+en relación con el tamaño total de la muestra, por lo que se optó por
+eliminar los registros con respuestas vacías o con las opciones “No
+sabe/No responde”.
 
-Además, dado que el ACP requiere trabajar exclusivamente con variables cuantitativas, se transformaron en dummies todas las variables dicotómicas, y la variable sobre el tipo de centro penitenciario (femenil, varonil o mixto) se recodificó en dos variables dummy adicionales.
+Además, dado que el ACP requiere trabajar exclusivamente con variables
+cuantitativas, se transformaron en dummies todas las variables
+dicotómicas, y la variable sobre el tipo de centro penitenciario
+(femenil, varonil o mixto) se recodificó en dos variables dummy
+adicionales.
 
-Por lo tanto, el análisis se realizó sobre una base de 31.535 individuos y 18 variables, donde una corresponde al identificador, dos son categóricas transformadas en dummies y el resto son completamente cuantitativas.
+Por lo tanto, el análisis se realizó sobre una base de 31.535 individuos
+y 18 variables, donde una corresponde al identificador, dos son
+categóricas transformadas en dummies y el resto son completamente
+cuantitativas.
 
-Pero antes de proceder con el ACP se hace una breve descripción y análisis de los datos por histogramas y gráficos de barras, antes de pasar a dummy las variables dicotomicas.
-
-
+Pero antes de proceder con el ACP se hace una breve descripción y
+análisis de los datos por histogramas y gráficos de barras, antes de
+pasar a dummy las variables dicotomicas.
 
 ```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
 vars_cont <- c(
@@ -165,9 +187,18 @@ graficos <- lapply(vars_cont, function(v) {
 wrap_plots(graficos, ncol = 2)
 ```
 
-Al mirar los gráficos pareciera que la edad se concentra en adultos jóvenes, mientras que variables como número de hijos y reclusiones previas muestran una fuerte acumulación en cero, lo que indica tanto la juventud de la muestra como la prevalencia de personas internas por primera vez. En contraste, variables asociadas a las condiciones de internamiento (como personas en la celda, comidas diarias y horas dentro de la celda) exhiben mayor variabilidad, incluyendo casos extremos de hacinamiento o encierro prolongado.
+Al mirar los gráficos pareciera que la edad se concentra en adultos
+jóvenes, mientras que variables como número de hijos y reclusiones
+previas muestran una fuerte acumulación en cero, lo que indica tanto la
+juventud de la muestra como la prevalencia de personas internas por
+primera vez. En contraste, variables asociadas a las condiciones de
+internamiento (como personas en la celda, comidas diarias y horas dentro
+de la celda) exhiben mayor variabilidad, incluyendo casos extremos de
+hacinamiento o encierro prolongado.
 
-En conjunto, estas distribuciones permiten identificar desigualdades en las condiciones de vida dentro de los centros penitenciarios y evidencian la heterogeneidad de experiencias entre los entrevistados
+En conjunto, estas distribuciones permiten identificar desigualdades en
+las condiciones de vida dentro de los centros penitenciarios y
+evidencian la heterogeneidad de experiencias entre los entrevistados
 
 ```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
 # Variables categóricas de tu base
@@ -208,9 +239,19 @@ wrap_plots(graficos_cat, ncol = 2)
 
 ```
 
-Se observa que predominan los hombres en las carceles de México, así como personas solteras y con niveles educativos que no superan la secundaria. Más de la mitad declara tener hijos y una proporción importante mantenía económicamente a alguien antes de su detención, lo que evidencia que el encarcelamiento afecta no solo al individuo, sino también a su entorno familiar. Estas condiciones sociales y educativas reflejan patrones de vulnerabilidad que suelen documentarse en población penitenciaria.
+Se observa que predominan los hombres en las carceles de México, así
+como personas solteras y con niveles educativos que no superan la
+secundaria. Más de la mitad declara tener hijos y una proporción
+importante mantenía económicamente a alguien antes de su detención, lo
+que evidencia que el encarcelamiento afecta no solo al individuo, sino
+también a su entorno familiar. Estas condiciones sociales y educativas
+reflejan patrones de vulnerabilidad que suelen documentarse en población
+penitenciaria.
 
-En términos institucionales, la mayor parte de los entrevistados se encuentra en centros varoniles. La mayoría no ha enfrentado reclusiones previas, y los antecedentes familiares (haber vivido con madre o padre durante la infancia) muestran niveles relativamente iguales. 
+En términos institucionales, la mayor parte de los entrevistados se
+encuentra en centros varoniles. La mayoría no ha enfrentado reclusiones
+previas, y los antecedentes familiares (haber vivido con madre o padre
+durante la infancia) muestran niveles relativamente iguales.
 
 ```{r echo=FALSE, fig.height=11, fig.width=10, message=FALSE, warning=FALSE}
 # Seleccionar solo variables continuas
@@ -243,24 +284,41 @@ corrplot(
 )
 ```
 
-Al análizar la matriz de correlaciones permitió identificar asociaciones relevantes entre las variables antes de aplicar el ACP. Destaca la relación positiva entre tener hijos y mantener económicamente a alguien, lo que parece coherente. Asimismo, se observan correlaciones moderadas entre variables vinculadas al tipo de centro y ciertos servicios, como la relación entre mujer y comidas diarias, lo que sugiere posibles diferencias institucionales en la provisión de recursos. Las percepciones de seguridad también muestran patrones diferenciados: los internos de centros varoniles tienden a reportar menor seguridad en comparación con otros centros.
+Al análizar la matriz de correlaciones permitió identificar asociaciones
+relevantes entre las variables antes de aplicar el ACP. Destaca la
+relación positiva entre tener hijos y mantener económicamente a alguien,
+lo que parece coherente. Asimismo, se observan correlaciones moderadas
+entre variables vinculadas al tipo de centro y ciertos servicios, como
+la relación entre mujer y comidas diarias, lo que sugiere posibles
+diferencias institucionales en la provisión de recursos. Las
+percepciones de seguridad también muestran patrones diferenciados: los
+internos de centros varoniles tienden a reportar menor seguridad en
+comparación con otros centros.
 
-Por otra parte, las variables asociadas a antecedentes penales, como haber sido recluido previamente y número de reclusiones, presentan correlaciones esperables, mientras que factores del entorno familiar en la niñes muestran asociaciones débiles con el resto de los indicadores.
+Por otra parte, las variables asociadas a antecedentes penales, como
+haber sido recluido previamente y número de reclusiones, presentan
+correlaciones esperables, mientras que factores del entorno familiar en
+la niñes muestran asociaciones débiles con el resto de los indicadores.
 
 # Análisis de Componentes Principales (ACP)
 
+Se aplicó un ACP sobre las variables cuantitativas estandarizadas, en
+concreto se generaron 15 componentes, de los cuales los seis primeros
+explican el 63.43 % de la varianza total. Se seleccionan estos
+inicialmente por la regla de los autovalores mayores a 1 y porque en
+conjunto explican una proporción sustancial de la varianza.
 
 ```{r}
 
-res.pca<-FactoMineR:: PCA(vars_cont, scale.unit = TRUE, ncp = 20, graph = FALSE)
+res.pca<-FactoMineR:: PCA(vars_cont, ncp=20, scale.unit = TRUE, graph = FALSE)
 acp <- dudi.pca(vars_cont, scannf = FALSE, nf = 15) 
 
 # El parámetro nf indica cuantos ejes voy a conservar
 valp <- t(inertia(acp)$tot.inertia) # valores propios
-kable(valp, digits = 3)
+#kable(valp, digits = 3)
 ```
 
-## Varianza Explicada por las Componentes
+en donde se sabe que
 
 -   Varianza de la componente $\alpha$:\
     $$
@@ -275,12 +333,6 @@ kable(valp, digits = 3)
     $$
     \tau_q = \frac{\sum_{\alpha=1}^q \lambda_\alpha}{\sum_{\alpha=1}^p \lambda_\alpha}
     $$
-
-Interpretación: - $\lambda_\alpha$: Representa la cantidad de varianza
-total que captura la componente $\alpha$. - $\tau_\alpha$: Indica la
-proporción de la varianza total explicada por esa componente. -
-$\tau_q$: Muestra cuánta varianza total se conserva al usar solo las
-primeras $q$componentes.
 
 ```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE}
 # Extraer los valores propios y calcular los porcentajes
@@ -356,6 +408,26 @@ wrap_plots(c(grafico_valprop, grafico_varianza), ncol = 2)
 
 ## Contribuciones de las Variables a la Varianza del Factor
 
+An análizar las principales contribuciones de cada factor se encontron
+los siguientes interpretaciones:
+
+-   Eje 1: Género y tipo de centro. Diferencia principalmente entre
+    mujeres y hombres, así como entre centros femeniles y varoniles.
+-   Eje 2: Responsabilidad familiar. Refleja la presencia de hijos y la
+    carga económica previa, indicando vínculos familiares fuertes antes
+    de la detención.
+-   Eje 3: Experiencia penitenciaria previa. Resume la reincidencia y la
+    trayectoria en el sistema, junto con algunos antecedentes familiares
+    tempranos.
+-   Eje 4: Vínculos familiares en la infancia. Captura la estabilidad
+    familiar en los primeros años de vida, con una ligera asociación con
+    la edad.
+-   Eje 5: Condiciones materiales del encierro. Representa el
+    hacinamiento, la seguridad en la celda y condiciones más frecuentes
+    en centros varoniles.
+-   Eje 6: Edad y dinámica diaria. Combina madurez, responsabilidades
+    previas y el tiempo que los internos pasan encerrados.
+
 $$
 \text{Contribución}(Y_j, z_\alpha) = \frac{u_{j\alpha}^2 \cdot \lambda_\alpha}{\lambda_\alpha} = u_{j\alpha}^2
 $$ O, en forma de porcentaje: $$
@@ -415,15 +487,13 @@ wrap_plots(graficos_contribucion, ncol = n_ejes/3)
 
 ------------------------------------------------------------------------
 
-## Cosenos Cuadrados ($\cos^2$)
+## Calidad de representación ($\cos^2$)
+
+Recordando que se calcula como:
 
 $$
 \cos^2(\theta_{j,\alpha}) = \lambda_\alpha \cdot u_{j\alpha}^2
 $$
-
-Interpretación: - Representa la proporción de la varianza de la variable
-$Y_j$que es explicada por la componente $z_\alpha$. - Valores altos: La
-variable está bien representada en esa componente.
 
 ```{r echo=FALSE, fig.height=10, fig.width=11, message=FALSE, warning=FALSE}
 # Número de ejes a graficar
@@ -474,6 +544,16 @@ for (eje in 1:n_ejes) {
 wrap_plots(graficos_cos2, ncol = n_ejes/3)
 
 ```
+
+Como complemento, el análisis de cos² confirma que las variables
+centrales de cada eje están bien representadas por los componentes
+retenidos. En cada dimensión aparecen una o dos variables con cos² altos
+(mujer y detención femenina en el Eje 1; hijos y número de hijos en el
+Eje 2; reincidencia en el Eje 3; convivencia con madre y padre en el Eje
+4; hacinamiento en el Eje 5; edad en el Eje 6) lo que respalda que cada
+componente captura una dimensión clara y consistente. Ademas se observa
+que las variables están siendo bien representadas por un factor y no por
+varios a la vez
 
 ------------------------------------------------------------------------
 
