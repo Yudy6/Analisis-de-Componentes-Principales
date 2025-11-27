@@ -1,11 +1,56 @@
 ---
-title: "Análisis de Componentes Principales"
+title: "Descripción de la Base de Datos ENPOL 2021 a Travez del Análisis de Componentes Principales"
+subtitle: "Universidad Nacional de Colombia"
+author:
+
+  - "Yudy Vanesa Puerres Rosero (ypuerresr@unal.edu.co)"
+  - "Camila Andrea Ayala Camargo (caayala@unal.edu.co)"
+  - "Karen Liliana Barrantes Quiroga (kbarrantes@unal.edu.co)"
+  - "Laura Katherine Martínez Castiblanco (laumartinezca@unal.edu.co)"
+  - "Fredy Arley Urrea Cifuentes (furreac@unal.edu.co)"
+
+date: ""       # dejamos esto vacío y la fecha la pone LaTeX
 output: html_document
-date: "2025-11-25"
 editor_options: 
   markdown: 
     wrap: 72
+ormat:
+  pdf:
+    documentclass: article
+    fontsize: 11pt
+    geometry: "margin=2.5cm"
+    linestretch: 1.1
+    indent: true
+
+header-includes: |
+  \setlength{\parskip}{0em}          % sin espacio extra entre párrafos
+  \setlength{\parindent}{1.5em}      % con sangría
+  \date{1 de noviembre de 2025}      % fecha tal cual quieres que salga
 ---
+
+# Descripción de la base de datos ENPOL 2021
+
+Para este proyecto utilizo la **Encuesta Nacional de la Población
+Privada de la Libertad (ENPOL)** correspondiente al año **2021**, la
+cual es una operación estadística desarrollada por el Instituto Nacional
+de Estadística y Geografía (INEGI) de México. Esta encuesta constituye
+una de las fuentes más completas y actualizadas sobre las condiciones de
+vida, características sociodemográficas y situación jurídica de las
+personas privadas de la libertad en el país.
+
+La ENPOL tiene como objetivo generar información confiable sobre
+diferentes aspectos del internamiento, tales como el acceso a servicios
+básicos, el nivel de hacinamiento, los antecedentes familiares y
+laborales de la población reclusa, y la experiencia que las personas han
+tenido dentro del sistema penitenciario. Esta encuesta se ha aplicado en
+dos ocasiones, en 2016 y 2021; para este trabajo utilizo los datos más
+recientes.
+
+En general, la ENPOL incluye una amplia variedad de temas: desde
+variables sociodemográficas hasta condiciones específicas del
+internamiento, percepciones de seguridad, reincidencia, vínculos
+familiares y características del centro penitenciario. En este proyecto
+se trabajó con un subconjunto de estas variables, las cuales fueron:
 
 ```{r include=FALSE}
 # Instalar paquetes si es necesario
@@ -35,11 +80,11 @@ library(DT)
 library(gt)
 library(RColorBrewer)
 theme_set(theme_minimal(base_size = 24, base_family = "Atkinson Hyperlegible"))
-library(dplyr)
 library(skimr)
-library(gt)
 library(ggplot2)
 library(patchwork)
+library(corrplot)
+library(knitr)
 
 ```
 
@@ -56,6 +101,33 @@ DT::datatable(
   ),
   class = "nowrap"   # ← evita que las columnas se quiebren y se deformen
 )
+
+
+diccionario <- tibble::tribble(
+  ~variable, ~definicion, ~tipo,
+  "id_persona", "Identificador único del participante", "Categórica (ID)",
+  "edad", "Años cumplidos al momento de la encuesta", "Cuantitativa",
+  "estado_civil", "Estado civil recodificado en 4 categorías", "Categórica",
+  "escolaridad", "Nivel educativo agrupado en 4 niveles", "Categórica ordinal",
+  "tiene_hijos", "Indica si el participante tiene hijos", "Categórica dicotómica",
+  "numero_hijos", "Número total de hijos", "Cuantitativa",
+  "mantiene_alguien", "Mantenía económicamente a alguien antes de la detención", "Categórica dicotómica",
+  "personas_celda", "Número de personas con quienes comparte celda", "Cuantitativa",
+  "comida_dia", "Número de comidas proporcionadas al día", "Cuantitativa",
+  "horas_celda", "Horas que pasa en la celda durante un día", "Cuantitativa",
+  "seguridad_celda", "Percepción de seguridad en la celda", "Categórica dicotómica",
+  "antes_recluido", "Ha sido recluido previamente", "Categórica dicotómica",
+  "veces_recluido", "Número total de reclusiones previas", "Cuantitativa",
+  "vivio_con_madr", "Vivió con su madre antes de los 15 años", "Categórica dicotómica",
+  "vivio_con_padr", "Vivió con su padre antes de los 15 años", "Categórica dicotómica",
+  "mujer", "Dummy: 1 si es mujer", "Categórica dicotómica",
+  "detencion_varo", "Dummy: 1 si el centro es varonil", "Categórica dicotómica",
+  "detencion_fem", "Dummy: 1 si el centro es femenil", "Categórica dicotómica"
+)
+
+gt(diccionario) %>%
+  tab_header(title = "Diccionario de Variables del Estudio")
+
 ```
 
 ```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
@@ -129,6 +201,267 @@ graficos_cat <- lapply(vars_cat, function(v) {
 wrap_plots(graficos_cat, ncol = 2)
 
 ```
+
+```{r echo=FALSE, fig.height=11, fig.width=10, message=FALSE, warning=FALSE}
+# Seleccionar solo variables continuas
+vars_cont <- datos_con_dummies %>% 
+  select(-c(id_persona, estado_civil, escolaridad)
+  )
+
+# Matriz de correlación
+mat_cor <- cor(vars_cont, use = "pairwise.complete.obs")
+
+# Paleta estética
+paleta <- colorRampPalette(c(
+  "#313695", "#4575B4", "#74ADD1", "#ABD9E9",
+  "#E0F3F8", "#FFFFBF", "#FEE090", "#FDAE61",
+  "#F46D43", "#D73027", "#A50026"
+))
+
+# Corrplot bonito
+corrplot(
+  mat_cor,
+  method = "color",
+  col = paleta(200),
+  type = "upper",        # solo triángulo superior (más limpio)
+  order = "hclust",      # agrupa variables por similitud
+  addCoef.col = "black", # añade los coeficientes
+  tl.col = "black",      # color de las etiquetas
+  tl.srt = 45,           # giro de etiquetas
+  number.cex = 0.8,      # tamaño de números
+  diag = FALSE           # oculta diagonal (no aporta)
+)
+```
+
+```{r}
+
+res.pca<-FactoMineR:: PCA(vars_cont, scale.unit = TRUE, ncp = 20, graph = FALSE)
+acp <- dudi.pca(vars_cont, scannf = FALSE, nf = 15) 
+
+# El parámetro nf indica cuantos ejes voy a conservar
+valp <- t(inertia(acp)$tot.inertia) # valores propios
+kable(valp, digits = 3)
+```
+
+## Varianza Explicada por las Componentes
+
+-   Varianza de la componente $\alpha$:\
+    $$
+    \text{var}(z_\alpha) = \lambda_\alpha
+    $$
+-   Porcentaje de varianza explicada por la componente $\alpha$:\
+    $$
+    \tau_\alpha = \frac{\lambda_\alpha}{\sum_{\alpha=1}^p \lambda_\alpha}
+    $$
+-   Porcentaje acumulado de varianza explicada por las primeras
+    $q$componentes:\
+    $$
+    \tau_q = \frac{\sum_{\alpha=1}^q \lambda_\alpha}{\sum_{\alpha=1}^p \lambda_\alpha}
+    $$
+
+Interpretación: - $\lambda_\alpha$: Representa la cantidad de varianza
+total que captura la componente $\alpha$. - $\tau_\alpha$: Indica la
+proporción de la varianza total explicada por esa componente. -
+$\tau_q$: Muestra cuánta varianza total se conserva al usar solo las
+primeras $q$componentes.
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE}
+# Extraer los valores propios y calcular los porcentajes
+eigenvalues <- valp[1, ]  # Fila "inertia"
+cumulative_variance <- valp[2, ]  # Fila "cum"
+total_variance <- cumulative_variance[length(cumulative_variance)] # Total de varianza explicada
+percentage_variance <- (eigenvalues / total_variance) * 100
+
+# --- GRÁFICO 1: Varianza explicada por los ejes ---
+# Crear un data frame para el gráfico
+df_ejes <- data.frame(
+  Eje = 1:length(eigenvalues),
+  Porcentaje = percentage_variance,
+  Etiqueta = paste0(round(percentage_variance, 1), "%")
+)
+
+# Crear el gráfico de barras con línea
+grafico_varianza <- ggplot(df_ejes, aes(x = Eje, y = Porcentaje)) +
+  geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
+  geom_line(aes(y = Porcentaje), color = "black", size = 1) +
+  geom_point(aes(y = Porcentaje), color = "black", size = 3) +
+  geom_text(aes(label = Etiqueta), vjust = -0.5, hjust = 0.5, size = 3.5) +
+  labs(
+    title = "Varianza explicada por los ejes",
+    x = "Eje",
+    y = "Porcentaje de varianza explicada"
+  ) +
+  scale_x_continuous(breaks = 1:length(eigenvalues)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major.y = element_line(color = "grey80"),
+    panel.grid.minor.y = element_blank()
+  )
+
+
+# --- GRÁFICO 2: Valores propios ---
+
+# Crear un data frame para el gráfico de valores propios
+df_valprop <- data.frame(
+  Eje = 1:length(eigenvalues),
+  ValorPropio = eigenvalues
+)
+
+# Crear el gráfico de barras
+grafico_valprop <- ggplot(df_valprop, aes(x = Eje, y = ValorPropio)) +
+  geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
+  labs(
+    title = "Valores propios",
+    x = "Eje",
+    y = "Valor Propio"
+  ) +
+  scale_x_continuous(breaks = 1:length(eigenvalues)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major.y = element_line(color = "grey80"),
+    panel.grid.minor.y = element_blank()
+  ) +
+  # Línea horizontal en y=1
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black", size = 1) +
+  # Área sombreada para valores > 1
+  annotate("rect",
+           xmin = -Inf, xmax = Inf,
+           ymin = 0.8, ymax = Inf,
+           fill = "pink", alpha = 0.3)
+
+
+wrap_plots(c(grafico_valprop, grafico_varianza), ncol = 2)
+```
+
+------------------------------------------------------------------------
+
+## Correlaciones Variable-Factor
+
+$$
+\text{Correlación}(Y_j, z_\alpha) = \sqrt{\lambda_\alpha} \cdot u_{j\alpha}
+$$
+
+Interpretación: - Mide qué tan bien una variable $Y_j$está representada
+en la componente $z_\alpha$. - Valores cercanos a ±1: La variable está
+bien representada en esa componente. - Valores cercanos a 0: La variable
+no está relacionada con esa componente.
+
+------------------------------------------------------------------------
+
+## Coordenadas de las Variables (Scores)
+
+$$
+w_{j\alpha} = \sqrt{\lambda_\alpha} \cdot u_{j\alpha}
+$$
+
+Interpretación: - Representa la posición de la variable $j$en el eje
+$\alpha$. - Se utilizan para graficar las variables en los planos
+factoriales.
+
+------------------------------------------------------------------------
+
+## Contribuciones de las Variables a la Varianza del Factor
+
+$$
+\text{Contribución}(Y_j, z_\alpha) = \frac{u_{j\alpha}^2 \cdot \lambda_\alpha}{\lambda_\alpha} = u_{j\alpha}^2
+$$ O, en forma de porcentaje: $$
+\text{Contribución}(\%) = \frac{u_{j\alpha}^2}{\sum_{j=1}^p u_{j\alpha}^2} \times 100
+$$
+
+Interpretación: - Indica cuánto contribuye la variable $Y_j$a la
+formación de la componente $z_\alpha$. - Valores altos: La variable es
+importante para definir esa componente.
+
+------------------------------------------------------------------------
+
+## Cosenos Cuadrados (\$\cos\^2 \$)
+
+$$
+\cos^2(\theta_{j,\alpha}) = \lambda_\alpha \cdot u_{j\alpha}^2
+$$
+
+Interpretación: - Representa la proporción de la varianza de la variable
+$Y_j$que es explicada por la componente $z_\alpha$. - Valores altos: La
+variable está bien representada en esa componente.
+
+------------------------------------------------------------------------
+
+## Coordenadas de los Objetos (Individuos)
+
+$$
+z_{i\alpha} = \sum_{j=1}^p u_{j\alpha} \cdot y_{ij}
+$$ o, en notación matricial: $$
+z_\alpha = Y \cdot u_\alpha
+$$
+
+Interpretación: - Representa la posición del objeto $i$en la componente
+$\alpha$. - Se usan para graficar los objetos en los planos factoriales.
+
+------------------------------------------------------------------------
+
+## Contribuciones de los Objetos a la Varianza del Factor
+
+$$
+\text{Contribución}(i, z_\alpha) = \frac{z_{i\alpha}^2}{\lambda_\alpha}
+$$
+
+Interpretación: - Indica cuánto contribuye el objeto \$i \$a la varianza
+de la componente \$z\_\alpha \$. - Valores altos: El objeto es
+importante para definir esa componente.
+
+------------------------------------------------------------------------
+
+## Cosenos Cuadrados para Objetos
+
+$$
+\cos^2(\theta_{i,\alpha}) = \frac{z_{i\alpha}^2}{\sum_{\alpha=1}^p z_{i\alpha}^2}
+$$
+
+Interpretación: - Mide qué tan bien está representado el objeto \$i \$en
+la componente \$\alpha \$. - Valores altos: El objeto está bien
+representado en esa componente.
+
+------------------------------------------------------------------------
+
+## Distancias entre Variables
+
+matriz de correlación $$
+d^2(Y_j, Y_{j'}) = 2 \left(1 - \cos(\theta_{jj'})\right)
+$$ donde \$\cos(\theta*{jj'}) \$es la correlación entre \$Y_j \$e
+\$Y*{j'} \$.
+
+Interpretación: - \$d \approx 0 \$: Variables muy correlacionadas. - \$d
+\approx \sqrt{2} \$: Variables no correlacionadas. - \$d \approx 2 \$:
+Variables inversamente correlacionadas.
+
+------------------------------------------------------------------------
+
+## Distancias entre Objetos
+
+$$
+d^2(i, i') = \sum_{j=1}^p (y_{ij} - y_{i'j})^2
+$$
+
+Interpretación: - Objetos cercanos: Tienen perfiles similares. - Objetos
+lejanos: Tienen perfiles diferentes. - Objetos en cuadrantes opuestos:
+Tienen perfiles opuestos.
+
+------------------------------------------------------------------------
+
+## Variables y Objetos Suplementarios
+
+-   Proyección de variable suplementaria: $$
+    Y^+ \cdot u_\alpha
+    $$
+-   Proyección de objeto suplementario: $$
+    Y_+ \cdot v_\alpha
+    $$
+
+Interpretación: - Permiten incluir información adicional sin afectar el
+cálculo de las componentes. - Cercanía a variables/objetos activos:
+Indica similitud o asociación.
 
 ``` r
 # Crear muestra del 10% 
