@@ -35,14 +35,99 @@ library(DT)
 library(gt)
 library(RColorBrewer)
 theme_set(theme_minimal(base_size = 24, base_family = "Atkinson Hyperlegible"))
+library(dplyr)
+library(skimr)
+library(gt)
+library(ggplot2)
+library(patchwork)
+
 ```
 
-```{r}
+```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
 # Cargar los archivos de datos
 load("Base de datos_filtrada.RData")
-# VERIFICACIÓN DE LAS VARIABLES SELECCIONADAS
 
-summary(datos_filtrados)
+DT::datatable(
+  as.data.frame(datos_filtrados),
+  caption = "Resumen interactivo",
+  options = list(
+    pageLength = 10,
+    scrollX = TRUE   # ← esto activa la barra horizontal
+  ),
+  class = "nowrap"   # ← evita que las columnas se quiebren y se deformen
+)
+```
+
+```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
+vars_cont <- c(
+  "edad",
+  "numero_hijos",
+  "personas_celda",
+  "comida_dia",
+  "horas_celda",
+  "veces_recluido"
+)
+
+graficos <- lapply(vars_cont, function(v) {
+
+  df <- datos_filtrados %>%
+    filter(!is.na(.data[[v]])) %>%
+    mutate(valor = as.integer(.data[[v]])) %>%  # asegura valores enteros
+    count(valor)
+
+  ggplot(df, aes(x = valor, y = n)) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    labs(
+      title = paste("Distribucion de", v),
+      x = v,
+      y = "Frecuencia"
+    ) +
+    theme_minimal(base_size = 11) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    )
+})
+
+wrap_plots(graficos, ncol = 2)
+```
+
+```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
+# Variables categóricas de tu base
+vars_cat <- c(
+  "sexo",
+  "estado_civil",
+  "escolaridad",
+  "tiene_hijos",
+  "mantiene_alguien",
+  "estado_detencion",
+  "seguridad_celda",
+  "antes_recluido",
+  "vivio_con_madr",
+  "vivio_con_padr"
+)
+
+graficos_cat <- lapply(vars_cat, function(v) {
+
+  df <- datos_filtrados %>%
+    filter(!is.na(.data[[v]])) %>%
+    count(.data[[v]]) %>%
+    arrange(desc(n))
+
+  colnames(df) <- c("categoria", "frecuencia")
+
+  ggplot(df, aes(x = reorder(categoria, frecuencia), y = frecuencia)) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    coord_flip() +  # ← gráfico horizontal
+    labs(
+      title = paste("Distribución de", v),
+      x = "Categoría",
+      y = "Frecuencia"
+    ) +
+    theme_minimal(base_size = 11)
+})
+
+wrap_plots(graficos_cat, ncol = 2)
+
 ```
 
 ``` r

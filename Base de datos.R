@@ -323,3 +323,8 @@ summary(result_pca)
 plot(result_pca, choix = "ind")
 plot(result_pca, choix = "var")
 plot(result_pca, choix = "varcor")
+
+# correlacion con corplot
+library(corrplot)
+corr_matrix <- cor(datos_quant)
+
