@@ -85,50 +85,52 @@ library(ggplot2)
 library(patchwork)
 library(corrplot)
 library(knitr)
+# Cargar los archivos de datos
+load("Base de datos_filtrada.RData")
 
 ```
 
 ```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
-# Cargar los archivos de datos
-load("Base de datos_filtrada.RData")
-
-DT::datatable(
-  as.data.frame(datos_filtrados),
-  caption = "Resumen interactivo",
-  options = list(
-    pageLength = 10,
-    scrollX = TRUE   # ← esto activa la barra horizontal
-  ),
-  class = "nowrap"   # ← evita que las columnas se quiebren y se deformen
-)
-
-
 diccionario <- tibble::tribble(
   ~variable, ~definicion, ~tipo,
   "id_persona", "Identificador único del participante", "Categórica (ID)",
   "edad", "Años cumplidos al momento de la encuesta", "Cuantitativa",
   "estado_civil", "Estado civil recodificado en 4 categorías", "Categórica",
   "escolaridad", "Nivel educativo agrupado en 4 niveles", "Categórica ordinal",
-  "tiene_hijos", "Indica si el participante tiene hijos", "Categórica dicotómica",
+  "tiene_hijos", "Indica si el participante tiene hijos", "Dummy",
   "numero_hijos", "Número total de hijos", "Cuantitativa",
-  "mantiene_alguien", "Mantenía económicamente a alguien antes de la detención", "Categórica dicotómica",
+  "mantiene_alguien", "Mantenía económicamente a alguien antes de la detención", "Dummy",
   "personas_celda", "Número de personas con quienes comparte celda", "Cuantitativa",
   "comida_dia", "Número de comidas proporcionadas al día", "Cuantitativa",
   "horas_celda", "Horas que pasa en la celda durante un día", "Cuantitativa",
-  "seguridad_celda", "Percepción de seguridad en la celda", "Categórica dicotómica",
-  "antes_recluido", "Ha sido recluido previamente", "Categórica dicotómica",
+  "seguridad_celda", "Percepción de seguridad en la celda", "Dummy",
+  "antes_recluido", "Ha sido recluido previamente", "Dummy",
   "veces_recluido", "Número total de reclusiones previas", "Cuantitativa",
-  "vivio_con_madr", "Vivió con su madre antes de los 15 años", "Categórica dicotómica",
-  "vivio_con_padr", "Vivió con su padre antes de los 15 años", "Categórica dicotómica",
-  "mujer", "Dummy: 1 si es mujer", "Categórica dicotómica",
-  "detencion_varo", "Dummy: 1 si el centro es varonil", "Categórica dicotómica",
-  "detencion_fem", "Dummy: 1 si el centro es femenil", "Categórica dicotómica"
+  "vivio_con_madr", "Vivió con su madre antes de los 15 años", "Dummy",
+  "vivio_con_padr", "Vivió con su padre antes de los 15 años", "Dummy",
+  "mujer", "Dummy: 1 si es mujer", "Dummy",
+  "detencion_varo", "Dummy: 1 si el centro es varonil", "Dummy",
+  "detencion_fem", "Dummy: 1 si el centro es femenil", "Dummy"
 )
 
 gt(diccionario) %>%
   tab_header(title = "Diccionario de Variables del Estudio")
 
 ```
+
+La base de datos original cuenta con 61.449 personas entrevistadas, a quienes se les aplicó un cuestionario de 1.252 variables. Dado el volumen y la naturaleza de la información (mayoritariamente dicotómica y con opciones adicionales como “no sé” o “no respondo”) es ideal aplicar un Análisis de Componentes Principales (ACP) que permita sintetizar y describir mejor la estructura subyacente de los datos.
+
+Sin embargo, para los fines de este proyecto (y dado a limitaciones computacionales) se seleccionó un subconjunto de 17 variables relacionadas con características sociodemográficas, condiciones de internamiento y antecedentes personales. Durante la revisión inicial se identificó que varias preguntas no eran respondidas por motivos lógicos. Por ejemplo, quienes indicaban no tener hijos dejaban en blanco el número de hijos; en estos casos se imputó el valor 0, coherente con el contexto.
+
+Tras este ajuste, el volumen restante de datos faltantes resultó mínimo en relación con el tamaño total de la muestra, por lo que se optó por eliminar los registros con respuestas vacías o con las opciones “No sabe/No responde”.
+
+Además, dado que el ACP requiere trabajar exclusivamente con variables cuantitativas, se transformaron en dummies todas las variables dicotómicas, y la variable sobre el tipo de centro penitenciario (femenil, varonil o mixto) se recodificó en dos variables dummy adicionales.
+
+Por lo tanto, el análisis se realizó sobre una base de 31.535 individuos y 18 variables, donde una corresponde al identificador, dos son categóricas transformadas en dummies y el resto son completamente cuantitativas.
+
+Pero antes de proceder con el ACP se hace una breve descripción y análisis de los datos por histogramas y gráficos de barras, antes de pasar a dummy las variables dicotomicas.
+
+
 
 ```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
 vars_cont <- c(
@@ -162,6 +164,10 @@ graficos <- lapply(vars_cont, function(v) {
 
 wrap_plots(graficos, ncol = 2)
 ```
+
+Al mirar los gráficos pareciera que la edad se concentra en adultos jóvenes, mientras que variables como número de hijos y reclusiones previas muestran una fuerte acumulación en cero, lo que indica tanto la juventud de la muestra como la prevalencia de personas internas por primera vez. En contraste, variables asociadas a las condiciones de internamiento (como personas en la celda, comidas diarias y horas dentro de la celda) exhiben mayor variabilidad, incluyendo casos extremos de hacinamiento o encierro prolongado.
+
+En conjunto, estas distribuciones permiten identificar desigualdades en las condiciones de vida dentro de los centros penitenciarios y evidencian la heterogeneidad de experiencias entre los entrevistados
 
 ```{r echo=FALSE, fig.height=10, fig.width=10, warning=FALSE, paged.print=TRUE}
 # Variables categóricas de tu base
@@ -202,6 +208,10 @@ wrap_plots(graficos_cat, ncol = 2)
 
 ```
 
+Se observa que predominan los hombres en las carceles de México, así como personas solteras y con niveles educativos que no superan la secundaria. Más de la mitad declara tener hijos y una proporción importante mantenía económicamente a alguien antes de su detención, lo que evidencia que el encarcelamiento afecta no solo al individuo, sino también a su entorno familiar. Estas condiciones sociales y educativas reflejan patrones de vulnerabilidad que suelen documentarse en población penitenciaria.
+
+En términos institucionales, la mayor parte de los entrevistados se encuentra en centros varoniles. La mayoría no ha enfrentado reclusiones previas, y los antecedentes familiares (haber vivido con madre o padre durante la infancia) muestran niveles relativamente iguales. 
+
 ```{r echo=FALSE, fig.height=11, fig.width=10, message=FALSE, warning=FALSE}
 # Seleccionar solo variables continuas
 vars_cont <- datos_con_dummies %>% 
@@ -232,6 +242,13 @@ corrplot(
   diag = FALSE           # oculta diagonal (no aporta)
 )
 ```
+
+Al análizar la matriz de correlaciones permitió identificar asociaciones relevantes entre las variables antes de aplicar el ACP. Destaca la relación positiva entre tener hijos y mantener económicamente a alguien, lo que parece coherente. Asimismo, se observan correlaciones moderadas entre variables vinculadas al tipo de centro y ciertos servicios, como la relación entre mujer y comidas diarias, lo que sugiere posibles diferencias institucionales en la provisión de recursos. Las percepciones de seguridad también muestran patrones diferenciados: los internos de centros varoniles tienden a reportar menor seguridad en comparación con otros centros.
+
+Por otra parte, las variables asociadas a antecedentes penales, como haber sido recluido previamente y número de reclusiones, presentan correlaciones esperables, mientras que factores del entorno familiar en la niñes muestran asociaciones débiles con el resto de los indicadores.
+
+# Análisis de Componentes Principales (ACP)
+
 
 ```{r}
 
@@ -334,31 +351,6 @@ grafico_valprop <- ggplot(df_valprop, aes(x = Eje, y = ValorPropio)) +
 
 wrap_plots(c(grafico_valprop, grafico_varianza), ncol = 2)
 ```
-
-------------------------------------------------------------------------
-
-## Correlaciones Variable-Factor
-
-$$
-\text{Correlación}(Y_j, z_\alpha) = \sqrt{\lambda_\alpha} \cdot u_{j\alpha}
-$$
-
-Interpretación: - Mide qué tan bien una variable $Y_j$está representada
-en la componente $z_\alpha$. - Valores cercanos a ±1: La variable está
-bien representada en esa componente. - Valores cercanos a 0: La variable
-no está relacionada con esa componente.
-
-------------------------------------------------------------------------
-
-## Coordenadas de las Variables (Scores)
-
-$$
-w_{j\alpha} = \sqrt{\lambda_\alpha} \cdot u_{j\alpha}
-$$
-
-Interpretación: - Representa la posición de la variable $j$en el eje
-$\alpha$. - Se utilizan para graficar las variables en los planos
-factoriales.
 
 ------------------------------------------------------------------------
 
@@ -540,7 +532,6 @@ g_final
 
 ```
 
-
 ```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
 # ---------- GRÁFICO 1: VARIABLES ----------
 g1 <- plot.PCA(
@@ -633,7 +624,6 @@ g_final
 
 ```
 
-
 ```{r echo=FALSE, fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
 # ---------- GRÁFICO 1: VARIABLES ----------
 g1 <- plot.PCA(
@@ -680,22 +670,35 @@ g_final
 
 ```
 
-
-
 ------------------------------------------------------------------------
 
-## Variables y Objetos Suplementarios
+## Variables Suplementarios
 
 -   Proyección de variable suplementaria: $$
     Y^+ \cdot u_\alpha
-    $$
--   Proyección de objeto suplementario: $$
-    Y_+ \cdot v_\alpha
     $$
 
 Interpretación: - Permiten incluir información adicional sin afectar el
 cálculo de las componentes. - Cercanía a variables/objetos activos:
 Indica similitud o asociación.
+
+```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+res.PCA<-PCA(datos_con_dummies %>% select(-id_persona),quali.sup=c(2,3),graph=FALSE,  scale.unit = TRUE)
+
+# ---- Variables suplementarias ----
+plot.PCA(
+  res.PCA,
+  invisible = c("ind", "ind.sup"),
+  col.quali = "#0077FF",
+  label =c('quali')
+) +
+  ggtitle("Variables Cualitativas Suplementarias") +
+  theme_minimal(base_size = 13)
+
+
+```
+
+------------------------------------------------------------------------
 
 ``` r
 # Crear muestra del 10% 
